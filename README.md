@@ -1,2 +1,3 @@
-cmsBooklet
-==========
+cms-booklet
+===========
+

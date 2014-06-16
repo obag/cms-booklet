@@ -1,0 +1,442 @@
+% cms-style
+% Copyright (c) 2013 Gabriele Farina (gabr.farina@gmail.com)
+%
+% Based on the original work at https://github.com/GassaFM/olymp.sty/
+%   License: https://github.com/GassaFM/olymp.sty/blob/master/LICENSE
+%   Authors: https://github.com/GassaFM/olymp.sty/blob/master/AUTHORS
+%
+
+\ProvidesPackage{cms-style}
+\usepackage{verbatim}
+
+\newif\if@landscape\@landscapefalse
+\newif\if@showproblemletter
+\newif\if@showproblemnumber
+\newif\if@intentionallyblankpages
+\newif\if@displayauthor
+\newif\if@displaydeveloper
+\newif\if@displayorigin
+\newif\if@revisionsignature
+\newif\if@displayauthorinfooter
+
+\newif\if@english\@englishtrue
+\newif\if@italian
+\new
+
+
+\DeclareOption{landscape}{\@landscapetrue}
+\DeclareOption{problemletters}{\@showproblemlettertrue}
+\DeclareOption{problemnumbers}{\@showproblemnumbertrue}
+\DeclareOption{intentionallyblankpages}{\@intentionallyblackpagestrue}
+
+% Language support
+\DeclareOption{english}{}
+\DeclareOption{italian}{\@englishfalse\@italiantrue}
+
+\ProcessOptions\relax
+
+%*********************************************************************
+%                        Import language file                        *
+%*********************************************************************
+
+\if@italian  \input{locale/italian}\fi
+\if@english  \input{locale/english}\fi
+
+
+
+%*********************************************************************
+%                          Sizes and margins                         *
+%*********************************************************************
+
+\newlength{\thelinewidth}
+\newlength{\exmpwidinf}
+\newlength{\exmpwidouf}
+\newlength{\exmpwidewid}
+\newlength{\exmpthreewidinf}
+\newlength{\exmpthreewidouf}
+\newlength{\exmpthreewidnote}
+\newlength{\afterproblemhead}
+\newlength{\afterconstraints}
+
+\ifcase\@ptsize % 10 pt
+    \hoffset=-26.5mm
+    \voffset=-35mm
+    \textheight=250mm
+    \textwidth=175mm
+\or % 11 pt
+    \hoffset=-25mm
+    \voffset=-37.5mm
+    \textheight=255mm
+    \textwidth=175mm
+\or % 12 pt
+    \hoffset=-20mm
+    \voffset=-35mm
+    \textheight=245mm
+    \textwidth=175mm
+\fi
+
+\thelinewidth=\textwidth
+\parindent=0mm
+\parskip=1ex
+\headheight=2cm
+\headsep=6mm
+\hfuzz=0.5pt
+
+\exmpwidinf=0.475\thelinewidth
+\exmpwidouf=0.475\thelinewidth
+\exmpwidewid=0.9\thelinewidth
+\exmpthreewidinf=0.28\thelinewidth
+\exmpthreewidouf=0.28\thelinewidth
+\exmpthreewidnote=0.30\thelinewidth
+\afterproblemhead=3mm
+\afterconstraints=2mm
+
+%*********************************************************************
+%                           Internal macros                          *
+%*********************************************************************
+
+% Define the header structure
+\renewcommand{\@oddhead}{%
+    \parbox{\textwidth}{%
+        \sffamily%
+        \begin{center}%
+            \protect{%
+                \this@contestname\par\this@contestlocation\unskip, \this@contestdate%
+            }%
+            \\[2pt]%
+            \hrule%
+        \end{center}%
+    }%
+}
+
+% Define the footer structure
+\renewcommand{\@oddfoot}{
+    \if@displayauthorinfooter%
+    {%
+        \gdef\footercontent{%
+            \if@showproblemletter\kw@Problem\ \Alph{@problemcounter}.\ \fi%
+            \if@showproblemnumber\ww@problem\ \arabic{@problemcounter}.\ \fi%
+            ~\texttt{\this@problemshorttitle}%
+            {\hfill}%
+            {\kw@ProblemAuthor~\last@problemauthor}%
+            {\hfill}%
+            {\kw@Page\ \thepage\ \kw@of\ \pageref{LastPage}}%
+            \quad~%
+        }%
+    }%
+    \else%
+    {%
+        \gdef\footercontent{%
+            \if@showproblemletter\kw@Problem\ \Alph{@problemcounter}.\ \fi%
+            \if@showproblemnumber\ww@problem\ \arabic{@problemcounter}.\ \fi%
+            ~\texttt{\this@problemshorttitle}%
+            {\hfill}%
+            \kw@Page\ \thepage\ \kw@of\ \pageref{LastPage}\hfill%
+        }%
+    }%
+    \fi%
+
+    \parbox{\textwidth}{
+        \hrule
+        \vspace{6pt}
+        \sffamily
+        \footercontent
+    }
+}
+
+% References to "lastpage"
+\def\lastpage@putlabel{\addtocounter{page}{-1}%
+   \immediate\write\@auxout{\string\newlabel{LastPage}{{}{\thepage}}}%
+   \addtocounter{page}{1}}
+\AtEndDocument{\clearpage\lastpage@putlabel}%
+
+
+% Delete space after verbatiminput 
+\addto@hook{\every@verbatim}{\topsep=0pt\relax}
+
+%*********************************************************************
+%                           Internal values                          *
+%*********************************************************************
+
+% @problemcounter
+%
+% knows the number of the current problem
+\newcounter{@problemcounter}
+
+% @problemtaskcounter
+%
+% knows the number of the current subtask (relative to the current problem)
+\newcounter{@subtaskcounter}[@problemcounter]
+
+
+%*********************************************************************
+%                         Internal commands                          *
+%*********************************************************************
+
+% @newsection
+%
+% This acts like a decorator, and registers a section command such as
+% the "Specifications", "Constraints", "Subtask 1" sections
+%
+% Arguments: 1) new command name     e.g. \Examples
+%            2) displayed title      e.g. Sample Cases
+\def\@newsection#1#2{
+    \DeclareRobustCommand{#1}{
+        {
+            \beforeproblemsectioncaption
+            \noindent\bf\problemsectionfont\textsf{#2}
+        }
+        \nopagebreak
+        \par\afterproblemsectioncaption
+    }
+}
+
+% @newsectionpar
+%
+% This acts like a decorator, and registers a section command such as
+% the "Specifications", "Constraints", "Subtask 1" sections
+%
+% Arguments: 1) new command name     e.g. \Examples
+%            2) displayed title      e.g. Sample Cases
+%
+% The resulting command will accept one argument, which will be appended
+% to the title.
+\def\@newsectionpar#1#2{
+    \DeclareRobustCommand{#1}[1]{
+        {
+            \beforeproblemsectioncaption
+            \noindent\bf\problemsectionfont\textsf{#2~##1}
+        }
+        \nopagebreak
+        \par\afterproblemsectioncaption
+    }
+}
+
+
+% @problemend
+%
+% this is run as the final action in the problem environment and must
+% account for the intentionally blank pages when the option is set
+\newcommand{\@problemend}{%
+    \clearpage%
+    \if@intentionallyblankpages%
+        \ifodd\value{page}%
+        \else%
+            \vspace*{\fill}%
+            \begin{center}%
+                \problemheadfont%
+                \begin{tikzpicture}%
+                    \draw (0,0) node[rectangle, draw=black!40, line width=1.5mm, inner sep = 1cm]%
+                        {\textcolor{black!60}{\bfseries \kw@IntentionallyBlankPage}};%
+                \end{tikzpicture}%
+            \end{center}%
+            \vspace*{\fill}%
+            \clearpage%
+        \fi%
+    \fi% 
+}
+
+%*********************************************************************
+%                           Public commands                          *
+%*********************************************************************
+
+% problemheadfont, problemsectionfont, problemtextfont
+%
+% define standard fonts for differen parts of the problem env.
+\newcommand{\problemheadfont}{\LARGE}
+\newcommand{\problemsectionfont}{\Large}
+\newcommand{\problemtextfont}{\normalsize}
+
+% beforeproblemsectioncaption, afterproblemsectioncaption
+\newcommand{\beforeproblemsectioncaption}{\smallbreak\smallskip}
+\newcommand{\afterproblemsectioncaption}{\smallskip}
+
+% Expose the newsection* decorators
+\newcommand{\createsection}{\@newsection}
+\newcommand{\createsectionpar}{\@newsectionpar}
+\newcommand{\createsectionpartwo}{\@newsectionpartwo}
+
+% Define standard sections
+\createsection{\Specification}{\kw@Specification}
+\createsection{\InputFile}{\kw@Input}
+\createsection{\OutputFile}{\kw@Output}
+\createsection{\Example}{\kw@Example}
+\createsection{\Examples}{\kw@Examples}
+\createsection{\Explanation}{\kw@Explanation}
+\createsection{\Explanations}{\kw@Explanations}
+\createsection{\Illustration}{\kw@Illustration}
+\createsection{\Scoring}{\kw@Scoring}
+\createsection{\Note}{\kw@Note}
+\createsection{\Notes}{\kw@Notes}
+\createsection{\Constraints}{\kw@Constraints}
+\createsection{\SubtaskOne}{\kw@SubtaskOne}
+\createsection{\SubtaskTwo}{\kw@SubtaskTwo}
+\createsection{\SubtaskThree}{\kw@SubtaskThree}
+\createsection{\SubtaskFour}{\kw@SubtaskFour}
+\createsection{\SubtaskFive}{\kw@SubtaskFive}
+\createsection{\SubtaskSix}{\kw@SubtaskSix}
+\createsectionpar{\Subtask}{\kw@Subtask}
+
+% SubtaskWithScore
+%
+% creates the section title for a subtask, specifying the number
+% of points. This automatically increments the subtask counter.
+% Arguments: 1) score for the current subtask   e.g. 20 points
+\newcommand{\SubtaskWithScore}[1]{
+    {
+        \addtocounter{@subtaskcounter}{1}
+        \beforeproblemsectioncaption
+
+        \noindent\problemsectionfont\textsf{\textbf{
+            \kw@Subtask~\arabic{subtaskcounter}
+        }}
+
+        \textsf{~(\kw@points:~#1)}
+        \nopagebreak
+        \par\afterproblemsectioncaption
+    }
+}
+
+\DeclareRobustCommand{\contest}[3]{
+    \gdef\this@contestname{#1}
+    \gdef\this@contestlocation{#2}
+    \gdef\this@contestdate{#3}
+}
+
+% -- Problem environment --
+\gdef\thisproblemauthor{\textit{\kw@notstated}}
+\gdef\thisproblemdeveloper{\textit{\kw@notstated}}
+\gdef\thisproblemorigin{\textit{\kw@notstated}}
+
+%*********************************************************************
+%                             Environments                           *
+%*********************************************************************
+
+% problem
+%
+% Arguments: 1) Long title          e.g. Maximum subarray
+%            2) Short title         e.g. maxsub
+%            3) Input filename      e.g. stdin
+%            4) Output filename     e.g. stdout
+%            5) Time limit          e.g. 1 second
+%            6) Memory limit        e.g. 256 Mib
+%
+
+\newenvironment{problem}[6]{
+    % Store values so that they don't go lost
+    \gdef\lastproblemauthor\thisproblemauthor
+    \gdef\lastproblemdeveloper\thisproblemdeveloper
+    \gdef\lastproblemorigin\thisproblemorigin
+    \ifx\this@problemshorttitle\else%
+        \gdef\last@problemstitle\this@problemtitle\fi
+    \gdef\last@problemtitle\this@problemtitle
+    \gdef\this@problemtitle{#1}
+    \ifx\this@problemshorttitle\else%
+        \gdef\last@problemshorttitle\this@problemshorttitle\fi
+    \gdef\this@problemshorttitle{#2}
+    \gdef\this@inputfilename{#3}
+    \gdef\this@outputfilename{#4}
+
+
+    % Add a line to the toc now, so that it is in the right page
+    \addcontentsline{toc}{section}{#1 (\texttt{#2})}
+    
+    % Problem title
+    \noindent
+    \refstepcounter{@problemcounter}
+    \textbf{\problemheadfont\textsf{%
+        \if@showproblemletter\kw@Problem\ \Alph{@problemcounter}.\ \fi%
+        \if@showproblemnumber\ww@problem\ \arabic{@problemcounter}.\ \fi%
+        #1 (\texttt{#2})%
+    }}%
+    
+    % Make the summary table
+    \nopagebreak
+    \par\vspace{\afterproblemhead}
+    \problemtextfont\parindent=6.5mm
+    \vbox{
+        \begin{tabular}{l@{\extracolsep{1cm}}l}
+            \kw@InputFileName & \texttt{#3} \\
+            \kw@OutputFileName & \texttt{#4} \\
+            \kw@TimeLimit & #5 \\
+            \kw@MemoryLimit & #6 \\
+        \end{tabular}
+    }
+    \nopagebreak
+    \par\vspace{\afterconstraints}
+    
+    % Prepare for the problem statement
+    \problemtextfont\parindent=0mm%
+}{
+    \@problemend
+}
+
+% example
+%
+% this is used for writing the sample testcases
+
+\newenvironment{example}{
+    \ttfamily\obeylines\obeyspaces\frenchspacing
+
+    \newcommand{\exmp}[2]{
+        \begin{minipage}[t]{\exmpwidinf}\rightskip=0pt plus 1fill\relax##1\medskip\end{minipage}&
+        \begin{minipage}[t]{\exmpwidouf}\rightskip=0pt plus 1fill\relax##2\medskip\end{minipage}\\
+        \hline
+    }
+
+    \newcommand{\exmpfile}[2]{
+       \exmp{
+          \verbatiminput{##1}
+       }{
+          \verbatiminput{##2}
+       }%
+    }
+
+    \begin{tabular}{|l|l|}
+        \hline
+        \multicolumn{1}{|c|}{\bf\texttt{\this@inputfilename}}&
+        \multicolumn{1}{|c|}{\bf\texttt{\this@outputfilename}}\\
+        \hline
+}{
+    \end{tabular}
+}
+
+% examplewide
+%
+% this is used for creating full-width examples. input and output are stacked
+% vertically instead of horizontally as with the example environment.
+
+\newenvironment{examplewide}{%
+    \ttfamily\obeylines\obeyspaces\frenchspacing
+
+    \newcommand{\exmp}[2]{
+        \begin{tabular}{|c|}
+            \hline
+            \multicolumn{1}{|c|}{\bf\texttt{\this@inputfilename}}\\
+            \hline
+            \begin{minipage}[t]{\exmpwidewid}\rightskip=0pt plus 1fill\relax
+                ##1
+            \medskip\end{minipage}\\
+            \hline
+            \multicolumn{1}{|c|}{\bf\texttt{\this@outputfilename}}\\%
+            \hline
+            \begin{minipage}[t]{\exmpwidewid}\rightskip=0pt plus 1fill\relax
+                ##2    
+            \medskip\end{minipage}\\%
+            \hline
+        \end{tabular}
+    }
+
+    \newcommand{\exmpfile}[2]{
+       \exmp{
+          \verbatiminput{##1}
+       }{
+          \verbatiminput{##2}
+       }%
+    }
+}{
+}
+
+% end of cms-style.sty
+\makeatother
+\sloppy
