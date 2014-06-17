@@ -19,8 +19,6 @@
 
 \newif\if@english\@englishtrue
 \newif\if@italian
-\new
-
 
 \DeclareOption{landscape}{\@landscapetrue}
 \DeclareOption{problemletters}{\@showproblemlettertrue}
@@ -113,7 +111,7 @@
     {%
         \gdef\footercontent{%
             \if@showproblemletter\kw@Problem\ \Alph{@problemcounter}.\ \fi%
-            \if@showproblemnumber\ww@problem\ \arabic{@problemcounter}.\ \fi%
+            \if@showproblemnumber\kw@Problem\ \arabic{@problemcounter}.\ \fi%
             ~\texttt{\this@problemshorttitle}%
             {\hfill}%
             {\kw@ProblemAuthor~\last@problemauthor}%
@@ -126,7 +124,7 @@
     {%
         \gdef\footercontent{%
             \if@showproblemletter\kw@Problem\ \Alph{@problemcounter}.\ \fi%
-            \if@showproblemnumber\ww@problem\ \arabic{@problemcounter}.\ \fi%
+            \if@showproblemnumber\kw@Problem\ \arabic{@problemcounter}.\ \fi%
             ~\texttt{\this@problemshorttitle}%
             {\hfill}%
             \kw@Page\ \thepage\ \kw@of\ \pageref{LastPage}\hfill%
@@ -189,7 +187,7 @@
     }
 }
 
-% @newsectionpar
+% @newsectionwithdescr
 %
 % This acts like a decorator, and registers a section command such as
 % the "Specifications", "Constraints", "Subtask 1" sections
@@ -199,7 +197,7 @@
 %
 % The resulting command will accept one argument, which will be appended
 % to the title.
-\def\@newsectionpar#1#2{
+\def\@newsectionwithdescr#1#2{
     \DeclareRobustCommand{#1}[1]{
         {
             \beforeproblemsectioncaption
@@ -246,13 +244,12 @@
 \newcommand{\problemtextfont}{\normalsize}
 
 % beforeproblemsectioncaption, afterproblemsectioncaption
-\newcommand{\beforeproblemsectioncaption}{\smallbreak\smallskip}
+\newcommand{\beforeproblemsectioncaption}{\smallbreak\bigskip}
 \newcommand{\afterproblemsectioncaption}{\smallskip}
 
 % Expose the newsection* decorators
 \newcommand{\createsection}{\@newsection}
-\newcommand{\createsectionpar}{\@newsectionpar}
-\newcommand{\createsectionpartwo}{\@newsectionpartwo}
+\newcommand{\createsectionwithdescr}{\@newsectionwithdescr}
 
 % Define standard sections
 \createsection{\Specification}{\kw@Specification}
@@ -273,7 +270,7 @@
 \createsection{\SubtaskFour}{\kw@SubtaskFour}
 \createsection{\SubtaskFive}{\kw@SubtaskFive}
 \createsection{\SubtaskSix}{\kw@SubtaskSix}
-\createsectionpar{\Subtask}{\kw@Subtask}
+\createsectionwithdescr{\Subtask}{\kw@Subtask}
 
 % SubtaskWithScore
 %
@@ -295,16 +292,16 @@
     }
 }
 
-\DeclareRobustCommand{\contest}[3]{
+\DeclareRobustCommand{\setupcontest}[3]{
     \gdef\this@contestname{#1}
     \gdef\this@contestlocation{#2}
     \gdef\this@contestdate{#3}
 }
 
 % -- Problem environment --
-\gdef\thisproblemauthor{\textit{\kw@notstated}}
-\gdef\thisproblemdeveloper{\textit{\kw@notstated}}
-\gdef\thisproblemorigin{\textit{\kw@notstated}}
+\gdef\this@problemauthor{\textit{\kw@notstated}}
+\gdef\this@problemdeveloper{\textit{\kw@notstated}}
+\gdef\this@problemorigin{\textit{\kw@notstated}}
 
 %*********************************************************************
 %                             Environments                           *
@@ -344,7 +341,7 @@
     \refstepcounter{@problemcounter}
     \textbf{\problemheadfont\textsf{%
         \if@showproblemletter\kw@Problem\ \Alph{@problemcounter}.\ \fi%
-        \if@showproblemnumber\ww@problem\ \arabic{@problemcounter}.\ \fi%
+        \if@showproblemnumber\kw@Problem\ \arabic{@problemcounter}.\ \fi%
         #1 (\texttt{#2})%
     }}%
     
@@ -375,15 +372,15 @@
 
 \newenvironment{example}{
     \ttfamily\obeylines\obeyspaces\frenchspacing
-
-    \newcommand{\exmp}[2]{
+    %
+    \newcommand{\exmp}[2]{%
         \begin{minipage}[t]{\exmpwidinf}\rightskip=0pt plus 1fill\relax##1\medskip\end{minipage}&
         \begin{minipage}[t]{\exmpwidouf}\rightskip=0pt plus 1fill\relax##2\medskip\end{minipage}\\
         \hline
     }
 
     \newcommand{\exmpfile}[2]{
-        \exmp{
+        \exmp{%
             \verbatiminput{##1}
         }{
             \verbatiminput{##2}
@@ -394,7 +391,8 @@
         \hline
         \multicolumn{1}{|c|}{\bf\texttt{\this@inputfilename}}&
         \multicolumn{1}{|c|}{\bf\texttt{\this@outputfilename}}\\
-        \hline
+        \hline\hline
+        \noindent%
 }{
     \end{tabular}
 }
