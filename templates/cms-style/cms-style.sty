@@ -15,7 +15,6 @@
 \newif\if@displaydeveloper
 \newif\if@displayorigin
 \newif\if@revisionsignature
-\newif\if@displayauthorinfooter
 
 \newif\if@english\@englishtrue
 \newif\if@italian
@@ -23,6 +22,7 @@
 \DeclareOption{landscape}{\@landscapetrue}
 \DeclareOption{problemletters}{\@showproblemlettertrue}
 \DeclareOption{problemnumbers}{\@showproblemnumbertrue}
+\DeclareOption{displayauthor}{\@displayauthortrue}
 \DeclareOption{intentionallyblankpages}{\@intentionallyblackpagestrue}
 
 % Language support
@@ -107,7 +107,7 @@
 
 % Define the footer structure
 \renewcommand{\@oddfoot}{
-    \if@displayauthorinfooter%
+    \if@displayauthor%
     {%
         \gdef\footercontent{%
             \if@showproblemletter\kw@Problem\ \Alph{@problemcounter}.\ \fi%
@@ -276,17 +276,19 @@
 %
 % creates the section title for a subtask, specifying the number
 % of points. This automatically increments the subtask counter.
-% Arguments: 1) score for the current subtask   e.g. 20 points
+%
+% Arguments: 1) score for the current subtask   e.g. 20
+
 \newcommand{\SubtaskWithScore}[1]{
     {
         \addtocounter{@subtaskcounter}{1}
         \beforeproblemsectioncaption
 
-        \noindent\problemsectionfont\textsf{\textbf{
-            \kw@Subtask~\arabic{subtaskcounter}
-        }}
-
+        \noindent\problemsectionfont\textsf{\textbf{%
+            \kw@Subtask~\arabic{@subtaskcounter}%
+        }}%
         \textsf{~(\kw@points:~#1)}
+
         \nopagebreak
         \par\afterproblemsectioncaption
     }
@@ -319,15 +321,15 @@
 
 \newenvironment{problem}[6]{
     % Store values so that they don't go lost
-    \gdef\lastproblemauthor\thisproblemauthor
-    \gdef\lastproblemdeveloper\thisproblemdeveloper
-    \gdef\lastproblemorigin\thisproblemorigin
+    \gdef\last@problemauthor{\this@problemauthor}
+    \gdef\last@problemdeveloper{\this@problemdeveloper}
+    \gdef\last@problemorigin{\this@problemorigin}
     \ifx\this@problemshorttitle\else%
-        \gdef\last@problemstitle\this@problemtitle\fi
-    \gdef\last@problemtitle\this@problemtitle
+        \gdef\last@problemstitle{\this@problemtitle}\fi
+    \gdef\last@problemtitle{\this@problemtitle}
     \gdef\this@problemtitle{#1}
     \ifx\this@problemshorttitle\else%
-        \gdef\last@problemshorttitle\this@problemshorttitle\fi
+        \gdef\last@problemshorttitle{\this@problemshorttitle}\fi
     \gdef\this@problemshorttitle{#2}
     \gdef\this@inputfilename{#3}
     \gdef\this@outputfilename{#4}
