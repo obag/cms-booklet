@@ -1,33 +1,73 @@
-% cms-style
+% cms-contest
+%
 % Copyright (c) 2013 Gabriele Farina (gabr.farina@gmail.com)
 %
-% Based on the original work at https://github.com/GassaFM/olymp.sty/
+% Licensed under the Apache License, Version 2.0 (the "License");
+% you may not use this file except in compliance with the License.
+% You may obtain a copy of the License at
 %
+%    http://www.apache.org/licenses/LICENSE-2.0
+%
+% Unless required by applicable law or agreed to in writing, software
+% distributed under the License is distributed on an "AS IS" BASIS,
+% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+% See the License for the specific language governing permissions and
+% limitations under the License.
+%
+% Based on the work at
+%  - https://github.com/GassaFM/olymp.sty/
+%  - https://github.com/boi-2014/tasks/
 
-\ProvidesPackage{cms-style}
-\usepackage{verbatim}
 
-\newif\if@landscape\@landscapefalse
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{cms-contest}
+\LoadClass[11pt,a4paper]{article}
+
+\RequirePackage{enumitem}
+\RequirePackage{graphicx}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{color} % for colored text
+\RequirePackage{import} % for changing current dir
+\RequirePackage{epigraph}
+\RequirePackage{daytime} % for displaying version number and date
+\RequirePackage{wrapfig} % for having text alongside pictures
+\RequirePackage{verbatim}
+\RequirePackage{tikz}
+\RequirePackage{booktabs}
+\RequirePackage{eurosym}
+\RequirePackage{verbatim}
+\RequirePackage{fancyhdr}
+\RequirePackage{calc}
+\RequirePackage{float}
+\RequirePackage{lastpage}
+\RequirePackage{listings}
+\RequirePackage{lmodern}
+\RequirePackage{multirow}
+\RequirePackage{placeins}
+\RequirePackage{pstricks}
+\RequirePackage[compact]{titlesec}
+\RequirePackage{verbatim}
+\RequirePackage{ifthen}
+
+\pagestyle{fancy}
+
 \newif\if@showproblemletter
 \newif\if@showproblemnumber
 \newif\if@intentionallyblankpages
-\newif\if@displayauthor
-\newif\if@displaydeveloper
-\newif\if@displayorigin
-\newif\if@revisionsignature
 
+\newif\if@showlogo\@showlogofalse
 \newif\if@english\@englishtrue
 \newif\if@italian
 
-\DeclareOption{landscape}{\@landscapetrue}
 \DeclareOption{problemletters}{\@showproblemlettertrue}
 \DeclareOption{problemnumbers}{\@showproblemnumbertrue}
-\DeclareOption{displayauthor}{\@displayauthortrue}
-\DeclareOption{intentionallyblankpages}{\@intentionallyblackpagestrue}
+\DeclareOption{intentionallyblankpages}{\@intentionallyblankpagestrue}
 
 % Language support
+\gdef\@languagecode{EN}
 \DeclareOption{english}{}
-\DeclareOption{italian}{\@englishfalse\@italiantrue}
+\DeclareOption{italian}{\@englishfalse\@italiantrue\gdef\@languagecode{IT}}
 
 \ProcessOptions\relax
 
@@ -37,8 +77,6 @@
 
 \if@italian  \input{locale/italian}\fi
 \if@english  \input{locale/english}\fi
-
-
 
 %*********************************************************************
 %                          Sizes and margins                         *
@@ -53,66 +91,96 @@
 \newlength{\exmpthreewidnote}
 \newlength{\afterproblemhead}
 \newlength{\afterconstraints}
+\newlength{\logolength}
+\newlength{\logomargin}
 
-\ifcase\@ptsize % 10 pt
-    \hoffset=-26.5mm
-    \voffset=-35mm
-    \textheight=250mm
-    \textwidth=175mm
-\or % 11 pt
-    \hoffset=-25mm
-    \voffset=-37.5mm
-    \textheight=255mm
-    \textwidth=175mm
-\or % 12 pt
-    \hoffset=-20mm
-    \voffset=-35mm
-    \textheight=245mm
-    \textwidth=175mm
-\fi
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
 
-\thelinewidth=\textwidth
+\headheight=18mm
+\headsep=8mm
 \parindent=0mm
-\parskip=1ex
-\headheight=2cm
-\headsep=6mm
-\hfuzz=0.5pt
+\parskip=6pt
+\hoffset=-24mm
+\voffset=-20mm
+\textheight=233mm
+\textwidth=175mm
 
-\exmpwidinf=0.475\thelinewidth
-\exmpwidouf=0.475\thelinewidth
-\exmpwidewid=0.9\thelinewidth
-\exmpthreewidinf=0.28\thelinewidth
-\exmpthreewidouf=0.28\thelinewidth
-\exmpthreewidnote=0.30\thelinewidth
+\exmpwidinf=0.475\textwidth
+\exmpwidouf=0.475\textwidth
+\exmpwidewid=0.9\textwidth
+\exmpthreewidinf=0.28\textwidth
+\exmpthreewidouf=0.28\textwidth
+\exmpthreewidnote=0.30\textwidth
 \afterproblemhead=3mm
 \afterconstraints=2mm
+\logolength=23mm
+\logomargin=3mm
+
+%*********************************************************************
+%                           Internal variables                       *
+%*********************************************************************
+\gdef\this@contestname{Contest name}
+\gdef\this@contestlocation{Contest location}
+\gdef\this@contestdate{Contest date}
+\gdef\this@contestday{}
+\gdef\this@contestlogo{logo.png}
+
+\gdef\this@problemtitle{Problem Title}
+\gdef\last@problemtitle{}
+\gdef\this@problemshorttitle{Problem Short Title}
+\gdef\last@problemshorttitle{}
+\gdef\this@problemauthor{}
+\gdef\last@problemauthor{}
+\gdef\this@inputfilename{}
+\gdef\this@outputfilename{}
+\gdef\this@problemrevnumber{}
 
 %*********************************************************************
 %                           Internal macros                          *
 %*********************************************************************
 
 % Define the header structure
-\renewcommand{\@oddhead}{%
-    \parbox{\textwidth}{%
-        \sffamily%
-        \begin{center}%
-            \protect{%
-                \this@contestname\par\this@contestlocation\unskip, \this@contestdate%
-            }%
-            \\[2pt]%
-            \hrule%
-        \end{center}%
-    }%
+\lhead{}\rhead{}
+\chead{%
+	\if@showlogo\else\setlength{\logolength}{0mm}\setlength{\logomargin}{0mm}\fi
+    \begin{tabular}{@{}p{\logolength+\logomargin}@{}p{\textwidth-\logolength-\logomargin}@{}}%
+        \begin{minipage}[b]{\logolength}%
+            \if@showlogo\includegraphics[width=\logolength]{\this@contestlogo}\fi
+        \end{minipage} &%
+           \begin{minipage}[b]{\textwidth-\logolength-\logomargin}%
+            {\sffamily\Large
+                \this@contestname%
+                \ifthenelse{\equal{\this@contestday}{}} %
+                {}{%
+                	\hfill\makebox[0pt][r]{\kw@Day~\this@contestday}%
+                }%
+            }
+            \vskip 2.5mm \hrule\vskip 2.5mm%
+            {\sffamily\makebox[0pt][l]{%
+                \this@contestlocation\unskip, \this@contestdate}%
+            \hfill\ttfamily\bfseries\makebox[0pt][r]{\this@problemshorttitle\enskip$\bullet$\enskip\@languagecode\ifthenelse{\equal{\this@problemrevnumber}{}}{}{\enskip$\bullet$\enskip\kw@revision \this@problemrevnumber%
+            }}}
+        \end{minipage}%
+    \end{tabular}%
 }
-
-% Define the footer structure
-\renewcommand{\@oddfoot}{
-    \if@displayauthor%
+\lfoot{}\rfoot{}
+\cfoot{\small 
+    \ifthenelse{\equal{\last@problemauthor}{}}%
     {%
         \gdef\footercontent{%
-            \if@showproblemletter\kw@Problem\ \Alph{@problemcounter}.\ \fi%
-            \if@showproblemnumber\kw@Problem\ \arabic{@problemcounter}.\ \fi%
-            ~\texttt{\this@problemshorttitle}%
+            \if@showproblemletter\kw@Problem~\Alph{@problemcounter}.\ \fi%
+            \if@showproblemnumber\kw@Problem~\arabic{@problemcounter}.\ \fi%
+            ~\texttt{\this@problemshorttitle\ifthenelse{\equal{\this@problemrevnumber}{}}{}{\enskip\textemdash\enskip\kw@revision \this@problemrevnumber}}%
+            {\hfill}%
+            \kw@Page\ \thepage\ \kw@of\ \pageref{LastPage}\hfill%
+        }%
+    }%    
+    {%
+        \gdef\footercontent{%
+            \if@showproblemletter\kw@Problem~\Alph{@problemcounter}.\ \fi%
+            \if@showproblemnumber\kw@Problem~\arabic{@problemcounter}.\ \fi%
+            ~\texttt{\this@problemshorttitle\ifthenelse{\equal{\this@problemrevnumber}{}}{}{\enskip$\bullet$\enskip\kw@revision \this@problemrevnumber}}%
             {\hfill}%
             {\kw@ProblemAuthor~\last@problemauthor}%
             {\hfill}%
@@ -120,24 +188,13 @@
             \quad~%
         }%
     }%
-    \else%
-    {%
-        \gdef\footercontent{%
-            \if@showproblemletter\kw@Problem\ \Alph{@problemcounter}.\ \fi%
-            \if@showproblemnumber\kw@Problem\ \arabic{@problemcounter}.\ \fi%
-            ~\texttt{\this@problemshorttitle}%
-            {\hfill}%
-            \kw@Page\ \thepage\ \kw@of\ \pageref{LastPage}\hfill%
-        }%
-    }%
-    \fi%
-
-    \parbox{\textwidth}{
-        \hrule
-        \vspace{6pt}
-        \sffamily
-        \footercontent
-    }
+	%
+    \parbox{\textwidth}{ %
+        \hrule %
+        \vspace{6pt} %
+        \sffamily %
+        \footercontent %
+    } %
 }
 
 % References to "lastpage"
@@ -294,20 +351,39 @@
     }
 }
 
-\DeclareRobustCommand{\setupcontest}[3]{
-    \gdef\this@contestname{#1}
-    \gdef\this@contestlocation{#2}
-    \gdef\this@contestdate{#3}
+\newcommand{\setContestDay}[1]{
+	\gdef\this@contestday{#1}
 }
 
-% -- Problem environment --
-\gdef\this@problemauthor{\textit{\kw@notstated}}
-\gdef\this@problemdeveloper{\textit{\kw@notstated}}
-\gdef\this@problemorigin{\textit{\kw@notstated}}
+\newcommand{\setProblemAuthor}[1]{
+	\gdef\this@problemauthor{#1}
+}
+
+\newcommand{\setProblemRevNumber}[1]{
+	\gdef\this@problemrevnumber{#1}
+}
+
+\newcommand{\setContestLogo}[1]{
+	\@showlogotrue
+	\gdef\this@contestlogo{#1}
+}
+
 
 %*********************************************************************
 %                             Environments                           *
 %*********************************************************************
+
+% contest
+%
+% Arguments: 1) Contest name
+%            2) Contest location
+%            3) Contest date
+
+\newenvironment{contest}[3]{
+    \gdef\this@contestname{#1}
+    \gdef\this@contestlocation{#2}
+    \gdef\this@contestdate{#3}
+}{}
 
 % problem
 %
@@ -322,17 +398,13 @@
 \newenvironment{problem}[6]{
     % Store values so that they don't go lost
     \gdef\last@problemauthor{\this@problemauthor}
-    \gdef\last@problemdeveloper{\this@problemdeveloper}
-    \gdef\last@problemorigin{\this@problemorigin}
-    \ifx\this@problemshorttitle\else%
-        \gdef\last@problemstitle{\this@problemtitle}\fi
     \gdef\last@problemtitle{\this@problemtitle}
     \gdef\this@problemtitle{#1}
-    \ifx\this@problemshorttitle\else%
-        \gdef\last@problemshorttitle{\this@problemshorttitle}\fi
+    \gdef\last@problemshorttitle{\this@problemshorttitle}
     \gdef\this@problemshorttitle{#2}
     \gdef\this@inputfilename{#3}
     \gdef\this@outputfilename{#4}
+    \gdef\this@problemrevnumber{}
 
 
     % Add a line to the toc now, so that it is in the right page
@@ -342,8 +414,8 @@
     \noindent
     \refstepcounter{@problemcounter}
     \textbf{\problemheadfont\textsf{%
-        \if@showproblemletter\kw@Problem\ \Alph{@problemcounter}.\ \fi%
-        \if@showproblemnumber\kw@Problem\ \arabic{@problemcounter}.\ \fi%
+        \if@showproblemletter\kw@Problem~\Alph{@problemcounter}.\ \fi%
+        \if@showproblemnumber\kw@Problem~\arabic{@problemcounter}.\ \fi%
         #1 (\texttt{#2})%
     }}%
     
