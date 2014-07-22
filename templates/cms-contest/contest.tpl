@@ -5,7 +5,7 @@
 \usepackage[((( __language )))]{babel}
 
 \begin{document}
-	\begin{contest}{(((name)))}{(((location)))}{(((date)))}
+	\begin{contest}{(((description)))}{(((location)))}{(((date)))}
 		\setContestLogo{(((logo)))}
 		((* for __problem in __problems *))
 			((( __problem )))

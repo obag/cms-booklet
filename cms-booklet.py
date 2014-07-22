@@ -83,6 +83,11 @@ if __name__ == '__main__':
 		help = 'The template to be used'
 	)
 	parser.add_argument(
+		'-n', '--no-compile',
+		action = 'store_true',
+		help = 'Do not compile latex'
+	)
+	parser.add_argument(
 		'-f', '--force',
 		action = 'store_true',
 		help = 'Delete working directories if they exist'
@@ -164,6 +169,7 @@ if __name__ == '__main__':
 		assert 'tasks' in contest_yaml
 
 		rendered_problem_templates = []
+		contest_statics = []
 		for task in contest_yaml['tasks']:
 			task_abspath = os.path.join(os.path.dirname(contest_abspath), task, 'task.yaml')
 			print "[>] Processing PROBLEM file: %s" % task_abspath
@@ -206,6 +212,12 @@ if __name__ == '__main__':
 				shutil.copytree(template_data_folder, target_dir)
 			if not os.path.exists(target_dir):
 				os.makedirs(target_dir)
+			for obj in os.listdir(os.path.join(os.path.dirname(task_abspath), 'testo')):
+				path = os.path.join(os.path.dirname(task_abspath), 'testo', obj)
+				if os.path.isfile(path) and path[-4:] not in ('.pdf', '.tex') and path[0] != '.':
+					print "[i] Copying file %s" % path
+					contest_statics += [path]
+					shutil.copy(path, target_dir)
 
 			problem_statement_file = os.path.join(os.path.dirname(task_abspath), 'testo', '%s.tex' % language)
 			target_statement_file = os.path.join(target_dir, 'statement.tex')
@@ -224,23 +236,24 @@ if __name__ == '__main__':
 				).encode('utf8')
 			)
 
-			print "[>] Compiling tex file"
-			proc = subprocess.Popen(
-				['latexmk', '-pdf', target_statement_file],
-				cwd = target_dir,
-				stdout = open(os.devnull, "w"),
-				stderr = open(os.devnull, "w")
-			)
-			timer = threading.Timer(60, lambda: proc.kill())
-			timer.start()
-			proc.wait()
-			timer.cancel()
-			target_pdf_file = os.path.join(target_dir, 'statement.pdf')
-			if os.path.exists(target_pdf_file):
-				print "[i] PDF file succesfully created"
-				shutil.copyfile(target_pdf_file, problem_pdf_file)
-			else:
-				print "[w] PDF file not created. Rerun with --keep or view log files in %s" % target_dir
+			if not args['no_compile']:
+				print "[>] Compiling tex file"
+				proc = subprocess.Popen(
+					['latexmk', '-f', '-interaction=nonstopmode', '-pdf', target_statement_file],
+					cwd = target_dir,
+					stdout = open(os.devnull, "w"),
+					stderr = open(os.devnull, "w")
+				)
+				timer = threading.Timer(60, lambda: proc.kill())
+				timer.start()
+				proc.wait()
+				timer.cancel()
+				target_pdf_file = os.path.join(target_dir, 'statement.pdf')
+				if os.path.exists(target_pdf_file):
+					print "[i] PDF file succesfully created"
+					shutil.copyfile(target_pdf_file, problem_pdf_file)
+				else:
+					print "[w] PDF file not created. Rerun with --keep or view log files in %s" % target_dir
 
 		if args['keep']:
 			target_dir = os.path.join(os.path.dirname(contest_abspath), 'booklet', '%s_files' % language)
@@ -258,6 +271,8 @@ if __name__ == '__main__':
 			shutil.copytree(template_data_folder, target_dir)
 		elif not os.path.exists(target_dir):
 			os.makedirs(target_dir)
+		for static in contest_statics:
+			shutil.copy(static, target_dir)
 
 		target_booklet_file = os.path.join(target_dir, 'booklet.tex')
 		booklet_pdf_file = os.path.join(os.path.dirname(contest_abspath), 'booklet.pdf')
@@ -269,21 +284,22 @@ if __name__ == '__main__':
 			).encode('utf8')
 		)
 
-		print "[>] Compiling tex file"
-		proc = subprocess.Popen(
-			['latexmk', '-pdf', target_booklet_file],
-			cwd = target_dir,
-			stdout = open(os.devnull, "w"),
-			stderr = open(os.devnull, "w")
-		)
-		timer = threading.Timer(60, lambda: proc.kill())
-		timer.start()
-		proc.wait()
-		timer.cancel()
+		if not args['no_compile']:	
+			print "[>] Compiling tex file"
+			proc = subprocess.Popen(
+				['latexmk', '-f', '-interaction=nonstopmode', '-pdf', target_booklet_file],
+				cwd = target_dir,
+				stdout = open(os.devnull, "w"),
+				stderr = open(os.devnull, "w")
+			)
+			timer = threading.Timer(60, lambda: proc.kill())
+			timer.start()
+			proc.wait()
+			timer.cancel()
 
-		target_pdf_file = os.path.join(target_dir, 'booklet.pdf')
-		if os.path.exists(target_pdf_file):
-			print "[i] PDF file succesfully created"
-			shutil.copyfile(target_pdf_file, booklet_pdf_file)
-		else:
-			print "[w] PDF file not created. Rerun with --keep or view log files in %s" % target_dir
+			target_pdf_file = os.path.join(target_dir, 'booklet.pdf')
+			if os.path.exists(target_pdf_file):
+				print "[i] PDF file succesfully created"
+				shutil.copyfile(target_pdf_file, booklet_pdf_file)
+			else:
+				print "[w] PDF file not created. Rerun with --keep or view log files in %s" % target_dir
