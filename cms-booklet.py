@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+#
 # cms-booklet - github.com/obag/cms-booklet
 # Copyright © 2014 Gabriele Farina <gabr.farina@gmail.com>
 #
@@ -15,6 +15,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 
 import sys
 import os
@@ -46,11 +47,11 @@ def process_problem(raw_content):
 		line = lines[i]
 		if line[:11] == '\\usepackage':
 			dependencies += [line]
-			lines[i] = '%%' + lines[i]
+			lines[i] = '%' + lines[i]
 	return '\n'.join(lines), dependencies
 
 if __name__ == '__main__':
-	templates_dir = './templates'
+	templates_dir = os.path.join(sys.prefix, 'cms-booklet', 'templates')
 
 	# Set up jinja2:
 	jinja2_env = jinja2.Environment(loader = jinja2.FileSystemLoader(templates_dir))
@@ -122,6 +123,7 @@ if __name__ == '__main__':
 		'--set',
 		action = 'append',
 		default = [],
+		metavar = 'KEY=VALUE',
 		help = 'Set (or override) template variables'
 	)
 	parser.add_argument(
