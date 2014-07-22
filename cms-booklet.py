@@ -283,10 +283,12 @@ if __name__ == '__main__':
 				if os.path.exists(target_pdf_file):
 					print "[i] PDF file succesfully created"
 					shutil.copyfile(target_pdf_file, problem_pdf_file)
+					errors = False
 				else:
 					print "[w] PDF file not created. Rerun with --keep or view log files in %s" % target_dir
+					errors = True
 
-			if not args['keep']:
+			if not args['keep'] and not errors:
 				print "[i] Deleting working directory"
 				shutil.rmtree(target_dir)
 
@@ -337,8 +339,10 @@ if __name__ == '__main__':
 			if os.path.exists(target_pdf_file):
 				print "[i] PDF file succesfully created"
 				shutil.copyfile(target_pdf_file, booklet_pdf_file)
+				errors = False
 			else:
 				print "[w] PDF file not created. Rerun with --keep or view log files in %s" % target_dir
-		if not args['keep']:
+				errors = True
+		if not args['keep'] and not errors:
 			print "[i] Deleting working directory"
 			shutil.rmtree(target_dir)
