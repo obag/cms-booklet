@@ -27,6 +27,28 @@ import subprocess
 import threading
 from jinja2 import meta as jinja2_meta
 
+def copy_static(src, dst):
+	assert os.path.isdir(dst)
+
+	if not os.path.isdir(src):
+		if os.path.islink(src):
+			linkto = os.readlink(src)
+			src = linkto if os.path.isabs(linkto) else os.path.join(os.path.dirname(src), linkto)
+		shutil.copy(src,dst)
+	else:
+		shutil.copytree(src,os.path.join(dst, os.path.basename(src)))
+
+def process_problem(raw_content):
+	dependencies = []
+
+	lines = raw_content.split('\n')
+	for i in xrange(len(lines)):
+		line = lines[i]
+		if line[:11] == '\\usepackage':
+			dependencies += [line]
+			lines[i] = '%%' + lines[i]
+	return '\n'.join(lines), dependencies
+
 if __name__ == '__main__':
 	templates_dir = './templates'
 
@@ -169,6 +191,7 @@ if __name__ == '__main__':
 		assert 'tasks' in contest_yaml
 
 		rendered_problem_templates = []
+		additional_packages = []
 		contest_statics = []
 		for task in contest_yaml['tasks']:
 			task_abspath = os.path.join(os.path.dirname(contest_abspath), task, 'task.yaml')
@@ -197,7 +220,7 @@ if __name__ == '__main__':
 
 			# Fill in the template for the single problem
 			if args['keep']:
-				target_dir = os.path.join(os.path.dirname(task_abspath), 'testo', '%s_files' % language)
+				target_dir = os.path.join(os.path.dirname(task_abspath), 'testo', '_%s_files' % language)
 				if os.path.exists(target_dir):
 					if args['force']:
 						print "[w] Deleting old directory"
@@ -214,17 +237,22 @@ if __name__ == '__main__':
 				os.makedirs(target_dir)
 			for obj in os.listdir(os.path.join(os.path.dirname(task_abspath), 'testo')):
 				path = os.path.join(os.path.dirname(task_abspath), 'testo', obj)
-				if os.path.isfile(path) and path[-4:] not in ('.pdf', '.tex') and path[0] != '.':
-					print "[i] Copying file %s" % path
+				if obj[0] not in ('_', '.'):
+					print "[i] Copying file/dir %s" % path
 					contest_statics += [path]
-					shutil.copy(path, target_dir)
+					copy_static(path, target_dir)
 
 			problem_statement_file = os.path.join(os.path.dirname(task_abspath), 'testo', '%s.tex' % language)
 			target_statement_file = os.path.join(target_dir, 'statement.tex')
 			problem_pdf_file = os.path.join(os.path.dirname(task_abspath), 'testo', '%s.pdf' % language)
 
 			print "[i] Reading problem statement file (%s)" % problem_statement_file
-			problem_content = open(problem_statement_file).read().decode('utf8')
+			raw_problem_content = open(problem_statement_file).read().decode('utf8')
+			problem_content, problem_dependencies = process_problem(raw_problem_content)
+			additional_packages += problem_dependencies
+			for package in additional_packages:
+				print "[-] Additional package: %s" % package
+
 			problem_tpl_args['__content'] = problem_content
 			rendered_problem_templates += [ problem_template.render(problem_tpl_args) ]
 
@@ -232,7 +260,8 @@ if __name__ == '__main__':
 			open(target_statement_file, 'w').write(
 				contest_template.render(
 					contest_tpl_args,
-					__problems = rendered_problem_templates[-1:]
+					__problems = rendered_problem_templates[-1:],
+					__additional_packages = problem_dependencies
 				).encode('utf8')
 			)
 
@@ -256,7 +285,7 @@ if __name__ == '__main__':
 					print "[w] PDF file not created. Rerun with --keep or view log files in %s" % target_dir
 
 		if args['keep']:
-			target_dir = os.path.join(os.path.dirname(contest_abspath), 'booklet', '%s_files' % language)
+			target_dir = os.path.join(os.path.dirname(contest_abspath), 'booklet', '_%s_files' % language)
 			if os.path.exists(target_dir): 
 				if args['force']:
 					print "[w] Deleting old directory"
@@ -272,7 +301,7 @@ if __name__ == '__main__':
 		elif not os.path.exists(target_dir):
 			os.makedirs(target_dir)
 		for static in contest_statics:
-			shutil.copy(static, target_dir)
+			copy_static(static, target_dir)
 
 		target_booklet_file = os.path.join(target_dir, 'booklet.tex')
 		booklet_pdf_file = os.path.join(os.path.dirname(contest_abspath), 'booklet.pdf')
@@ -280,7 +309,8 @@ if __name__ == '__main__':
 		open(target_booklet_file, 'w').write(
 			contest_template.render(
 				contest_tpl_args,
-				__problems = rendered_problem_templates
+				__problems = rendered_problem_templates,
+				__additional_packages = additional_packages
 			).encode('utf8')
 		)
 

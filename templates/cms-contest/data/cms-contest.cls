@@ -36,7 +36,6 @@
 \RequirePackage{tikz}
 \RequirePackage{booktabs}
 \RequirePackage{eurosym}
-\RequirePackage{verbatim}
 \RequirePackage{fancyhdr}
 \RequirePackage{calc}
 \RequirePackage{float}
@@ -45,12 +44,9 @@
 \RequirePackage{lmodern}
 \RequirePackage{multirow}
 \RequirePackage{placeins}
-\RequirePackage{pstricks}
 \RequirePackage[compact]{titlesec}
-\RequirePackage{verbatim}
 \RequirePackage{ifthen}
 \RequirePackage{tabularx}
-\RequirePackage{tkz-graph}
 
 \pagestyle{fancy}
 
@@ -99,7 +95,7 @@
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
-\headheight=18mm
+\headheight=20mm
 \headsep=8mm
 \parindent=0mm
 \parskip=6pt
@@ -361,7 +357,7 @@
 	\gdef\this@problemauthor{#1}
 }
 
-\newcommand{\setProblemRevNumber}[1]{
+\newcommand{\setProblemRevisionNumber}[1]{
 	\gdef\this@problemrevnumber{#1}
 }
 

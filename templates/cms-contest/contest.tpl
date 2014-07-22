@@ -4,6 +4,10 @@
 \usepackage[((( inputenc )))]{inputenc}
 \usepackage[((( __language )))]{babel}
 
+((* for __package in __additional_packages *))
+	((( __package )))
+((* endfor *))
+
 \begin{document}
 	\begin{contest}{(((description)))}{(((location)))}{(((date)))}
 		\setContestLogo{(((logo)))}
