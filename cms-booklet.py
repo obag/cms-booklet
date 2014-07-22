@@ -188,7 +188,7 @@ if __name__ == '__main__':
 		print "[*] Contest template variables:"
 		for (key, value) in contest_tpl_args.items():
 			if key[:2] != '__':
-				print "[-]     '%s': '%s'" % (key, value)
+				print "[-] '%s': '%s'" % (key, value)
 
 		assert 'tasks' in contest_yaml
 
@@ -252,7 +252,7 @@ if __name__ == '__main__':
 			raw_problem_content = open(problem_statement_file).read().decode('utf8')
 			problem_content, problem_dependencies = process_problem(raw_problem_content)
 			additional_packages += problem_dependencies
-			for package in additional_packages:
+			for package in problem_dependencies:
 				print "[-] Additional package: %s" % package
 
 			problem_tpl_args['__content'] = problem_content
@@ -285,6 +285,10 @@ if __name__ == '__main__':
 					shutil.copyfile(target_pdf_file, problem_pdf_file)
 				else:
 					print "[w] PDF file not created. Rerun with --keep or view log files in %s" % target_dir
+
+			if not args['keep']:
+				print "[i] Deleting working directory"
+				shutil.rmtree(target_dir)
 
 		if args['keep']:
 			target_dir = os.path.join(os.path.dirname(contest_abspath), 'booklet', '_%s_files' % language)
@@ -335,3 +339,6 @@ if __name__ == '__main__':
 				shutil.copyfile(target_pdf_file, booklet_pdf_file)
 			else:
 				print "[w] PDF file not created. Rerun with --keep or view log files in %s" % target_dir
+		if not args['keep']:
+			print "[i] Deleting working directory"
+			shutil.rmtree(target_dir)
