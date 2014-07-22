@@ -49,6 +49,8 @@
 \RequirePackage[compact]{titlesec}
 \RequirePackage{verbatim}
 \RequirePackage{ifthen}
+\RequirePackage{tabularx}
+\RequirePackage{tkz-graph}
 
 \pagestyle{fancy}
 
@@ -158,7 +160,7 @@
             }
             \vskip 2.5mm \hrule\vskip 2.5mm%
             {\sffamily\makebox[0pt][l]{%
-                \this@contestlocation\unskip, \this@contestdate}%
+                \this@contestlocation\unskip\ifthenelse{\equal{\this@contestdate}{}}{}{, \this@contestdate}}%
             \hfill\ttfamily\bfseries\makebox[0pt][r]{\this@problemshorttitle\enskip$\bullet$\enskip\@languagecode\ifthenelse{\equal{\this@problemrevnumber}{}}{}{\enskip$\bullet$\enskip\kw@revision \this@problemrevnumber%
             }}}
         \end{minipage}%
@@ -364,8 +366,10 @@
 }
 
 \newcommand{\setContestLogo}[1]{
-	\@showlogotrue
-	\gdef\this@contestlogo{#1}
+    \ifthenelse{\equal{#1}{}}{}{%
+	   \@showlogotrue%
+	   \gdef\this@contestlogo{#1}%
+    }
 }
 
 
@@ -427,8 +431,8 @@
         \begin{tabular}{l@{\extracolsep{1cm}}l}
             \kw@InputFileName & \texttt{#3} \\
             \kw@OutputFileName & \texttt{#4} \\
-            \kw@TimeLimit & #5 \\
-            \kw@MemoryLimit & #6 \\
+            \kw@TimeLimit & #5~\kw@seconds \\
+            \kw@MemoryLimit & #6~MiB \\
         \end{tabular}
     }
     \nopagebreak
