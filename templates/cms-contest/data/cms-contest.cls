@@ -315,6 +315,7 @@
 \createsection{\Explanation}{\kw@Explanation}
 \createsection{\Explanations}{\kw@Explanations}
 \createsection{\Illustration}{\kw@Illustration}
+\createsection{\Implementation}{\kw@Implementation}
 \createsection{\Scoring}{\kw@Scoring}
 \createsection{\Note}{\kw@Note}
 \createsection{\Notes}{\kw@Notes}

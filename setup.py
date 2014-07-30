@@ -33,8 +33,8 @@ for (path, dirs, files) in os.walk(os.path.join(this_path, 'templates')):
 
 setup(
 	name = 'cms-booklet',
-	version = '1.0',
-	description = 'cms-booklet: problem statement compiler for CMS (Contest Management System)',
+	version = '0.1',
+	description = 'cms-booklet: problem statement processor for CMS (Contest Management System)',
 	author = 'Gabriele Farina',
 	author_email = 'gabr.farina@gmail.com',
 
