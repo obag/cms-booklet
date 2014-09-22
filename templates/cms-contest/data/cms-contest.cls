@@ -426,8 +426,8 @@
     \problemtextfont\parindent=6.5mm
     \vbox{
         \begin{tabular}{l@{\extracolsep{1cm}}l}
-            \kw@InputFileName & \texttt{#3} \\
-            \kw@OutputFileName & \texttt{#4} \\
+            %\kw@InputFileName & \texttt{#3} \\
+            %\kw@OutputFileName & \texttt{#4} \\
             \kw@TimeLimit & #5~\kw@seconds \\
             \kw@MemoryLimit & #6~MiB \\
         \end{tabular}
