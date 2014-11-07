@@ -406,10 +406,6 @@
     \gdef\this@inputfilename{#3}
     \gdef\this@outputfilename{#4}
     \gdef\this@problemrevnumber{}
-
-
-    % Add a line to the toc now, so that it is in the right page
-    \addcontentsline{toc}{section}{#1 (\texttt{#2})}
     
     % Problem title
     \noindent
@@ -419,6 +415,9 @@
         \if@showproblemnumber\kw@Problem~\arabic{@problemcounter}.\ \fi%
         #1 (\texttt{#2})%
     }}%
+    % Add a line to the toc now, so that it is in the right page
+    \addcontentsline{toc}{section}{#1 (\texttt{#2})}
+
     
     % Make the summary table
     \nopagebreak
