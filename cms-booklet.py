@@ -51,7 +51,10 @@ def process_problem(raw_content):
 	return '\n'.join(lines), dependencies
 
 if __name__ == '__main__':
-	templates_dir = os.path.join(sys.prefix, 'cms-booklet', 'templates')
+        templates_dir = os.path.join(os.path.dirname(__file__), 'templates')
+        if not os.path.exists(templates_dir):
+                templates_dir = os.path.join(sys.prefix, 'cms-booklet', 'templates')
+        #print >> sys.stderr, "Using templates_dir %s" % (templates_dir)
 
 	# Set up jinja2:
 	jinja2_env = jinja2.Environment(loader = jinja2.FileSystemLoader(templates_dir))
