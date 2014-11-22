@@ -28,14 +28,56 @@ import subprocess
 import threading
 from jinja2 import meta as jinja2_meta
 
-def copy_static(src, dst):
+def fully_split(path):
+        """Split a path into a list of components.
+
+        Call iteratively os.path.split() in order to split a path in
+        all its components, which are returned as a list.
+
+        """
+        folders = []
+        while 1:
+                path,folder = os.path.split(path)
+                if folder != "":
+                        folders.append(folder)
+                else:
+                        if path != "":
+                                folders.append(path)
+                        break
+        folders.reverse()
+        return folders
+
+def copy_static(src, dst, force_content=False):
+        """Copy src to directory dst.
+
+        If src is a directory, it is recursively copied.
+
+        If src is a symbolic link, its content is copied, unless the
+        symlink is relative and points to a location inside the same
+        directory (or one of its subdirectories). If force_content is
+        True, then the content of symlinks is always copied,
+        irrespective of what stated before.
+
+        """
+        #print "src: %s, dst: %s" % (src, dst)
 	assert os.path.isdir(dst)
 
 	if not os.path.isdir(src):
 		if os.path.islink(src):
 			linkto = os.readlink(src)
-			src = linkto if os.path.isabs(linkto) else os.path.join(os.path.dirname(src), linkto)
-		shutil.copy(src,dst)
+                        # If the file is a absolute link or a relative
+                        # link to something outside the current
+                        # directory, copy the content instead of the
+                        # link
+                        if force_content or os.path.isabs(linkto) or fully_split(linkto)[0] == '..':
+                                src = linkto if os.path.isabs(linkto) else os.path.join(os.path.dirname(src), linkto)
+                        else:
+                                dest_path = os.path.join(dst, os.path.basename(src))
+                                if os.path.exists(dest_path):
+                                        os.unlink(dest_path)
+                                os.symlink(linkto, dest_path)
+                                return
+                shutil.copy(src,dst)
 	else:
 		shutil.copytree(src,os.path.join(dst, os.path.basename(src)))
 
@@ -312,7 +354,7 @@ if __name__ == '__main__':
 		elif not os.path.exists(target_dir):
 			os.makedirs(target_dir)
 		for static in contest_statics:
-			copy_static(static, target_dir)
+			copy_static(static, target_dir, force_content=True)
 
 		target_booklet_file = os.path.join(target_dir, 'booklet.tex')
 		booklet_pdf_file = os.path.join(os.path.dirname(contest_abspath), 'booklet.pdf')
