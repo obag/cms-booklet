@@ -1,6 +1,6 @@
 % cms-contest
 %
-% Copyright (c) 2013 Gabriele Farina (gabr.farina@gmail.com)
+% Copyright (c) 2015 Gabriele Farina (gabr.farina@gmail.com)
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@
 \RequirePackage{amsmath}
 \RequirePackage{amssymb}
 \RequirePackage{color} % for colored text
+\RequirePackage{comment}
 \RequirePackage{import} % for changing current dir
 \RequirePackage{epigraph}
 \RequirePackage{daytime} % for displaying version number and date
@@ -47,6 +48,8 @@
 \RequirePackage[compact]{titlesec}
 \RequirePackage{ifthen}
 \RequirePackage{tabularx}
+\RequirePackage{environ}
+
 
 \pagestyle{fancy}
 
@@ -57,10 +60,12 @@
 \newif\if@showlogo\@showlogofalse
 \newif\if@english\@englishtrue
 \newif\if@italian
+\newif\if@showsolutions\@showsolutionsfalse
 
 \DeclareOption{problemletters}{\@showproblemlettertrue}
 \DeclareOption{problemnumbers}{\@showproblemnumbertrue}
 \DeclareOption{intentionallyblankpages}{\@intentionallyblankpagestrue}
+\DeclareOption{showsolutions}{\@showsolutionstrue}
 
 % Language support
 \gdef\@languagecode{EN}
@@ -327,6 +332,7 @@
 \createsection{\SubtaskFive}{\kw@SubtaskFive}
 \createsection{\SubtaskSix}{\kw@SubtaskSix}
 \createsectionwithdescr{\Subtask}{\kw@Subtask}
+\createsection{\Solution}{\kw@Solution}
 
 % SubtaskWithScore
 %
@@ -397,6 +403,8 @@
 %
 
 \newenvironment{problem}[6]{
+    \setcounter{figure}{0}
+
     % Store values so that they don't go lost
     \gdef\last@problemauthor{\this@problemauthor}
     \gdef\last@problemtitle{\this@problemtitle}
@@ -406,10 +414,6 @@
     \gdef\this@inputfilename{#3}
     \gdef\this@outputfilename{#4}
     \gdef\this@problemrevnumber{}
-
-
-    % Add a line to the toc now, so that it is in the right page
-    \addcontentsline{toc}{section}{#1 (\texttt{#2})}
     
     % Problem title
     \noindent
@@ -419,6 +423,9 @@
         \if@showproblemnumber\kw@Problem~\arabic{@problemcounter}.\ \fi%
         #1 (\texttt{#2})%
     }}%
+    % Add a line to the toc now, so that it is in the right page
+    \addcontentsline{toc}{section}{#1 (\texttt{#2})}
+
     
     % Make the summary table
     \nopagebreak
@@ -426,8 +433,8 @@
     \problemtextfont\parindent=6.5mm
     \vbox{
         \begin{tabular}{l@{\extracolsep{1cm}}l}
-            \kw@InputFileName & \texttt{#3} \\
-            \kw@OutputFileName & \texttt{#4} \\
+            %\kw@InputFileName & \texttt{#3} \\
+            %\kw@OutputFileName & \texttt{#4} \\
             \kw@TimeLimit & #5~\kw@seconds \\
             \kw@MemoryLimit & #6~MiB \\
         \end{tabular}
@@ -439,6 +446,21 @@
     \problemtextfont\parindent=0mm%
 }{
     \@problemend
+}
+
+% solution
+%
+% it is shown only if showsolution is true
+
+\NewEnviron{solution}{
+\if@showsolutions
+    \definecolor{backcolor}{gray}{0.95}
+    \pagecolor{backcolor}
+    
+    \Solution
+    \BODY
+    \afterpage{\nopagecolor}
+\fi
 }
 
 % example

@@ -367,6 +367,7 @@ if __name__ == '__main__':
 			).encode('utf8')
 		)
 
+		errors = False
 		if not args['no_compile']:	
 			print "[>] Compiling tex file"
 			proc = subprocess.Popen(
@@ -388,6 +389,7 @@ if __name__ == '__main__':
 			else:
 				print "[w] PDF file not created. Rerun with --keep or view log files in %s" % target_dir
 				errors = True
+		
 		if not args['keep'] and not errors:
 			print "[i] Deleting working directory"
 			shutil.rmtree(target_dir)
