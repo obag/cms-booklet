@@ -4,6 +4,7 @@ contest:
     logo: ''
     location: ''
     date: ''
+    showsummary: true
 
 problem:
     infile: 'stdin'

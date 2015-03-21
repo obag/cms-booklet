@@ -1,4 +1,8 @@
-\documentclass[((( __language ))),((* if showsolutions *))showsolutions((* endif *))]{cms-contest}
+\documentclass[%
+	((( __language ))),%
+	((* if showsolutions *))showsolutions((* endif *)),%
+	((* if showsummary *))showsummary((* endif *)),%
+]{cms-contest}
 
 \usepackage[((( fontenc )))]{fontenc}
 \usepackage[((( inputenc )))]{inputenc}

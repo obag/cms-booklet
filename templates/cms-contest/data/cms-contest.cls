@@ -61,11 +61,13 @@
 \newif\if@english\@englishtrue
 \newif\if@italian
 \newif\if@showsolutions\@showsolutionsfalse
+\newif\if@showsummary\@showsummaryfalse
 
 \DeclareOption{problemletters}{\@showproblemlettertrue}
 \DeclareOption{problemnumbers}{\@showproblemnumbertrue}
 \DeclareOption{intentionallyblankpages}{\@intentionallyblankpagestrue}
 \DeclareOption{showsolutions}{\@showsolutionstrue}
+\DeclareOption{showsummary}{\@showsummarytrue}
 
 % Language support
 \gdef\@languagecode{EN}
@@ -428,19 +430,21 @@
 
     
     % Make the summary table
-    \nopagebreak
-    \par\vspace{\afterproblemhead}
-    \problemtextfont\parindent=6.5mm
-    \vbox{
-        \begin{tabular}{l@{\extracolsep{1cm}}l}
-            %\kw@InputFileName & \texttt{#3} \\
-            %\kw@OutputFileName & \texttt{#4} \\
-            \kw@TimeLimit & #5~\kw@seconds \\
-            \kw@MemoryLimit & #6~MiB \\
-        \end{tabular}
-    }
-    \nopagebreak
-    \par\vspace{\afterconstraints}
+    \if@showsummary
+        \nopagebreak
+        \par\vspace{\afterproblemhead}
+        \problemtextfont\parindent=6.5mm
+        \vbox{
+            \begin{tabular}{l@{\extracolsep{1cm}}l}
+                %\kw@InputFileName & \texttt{#3} \\
+                %\kw@OutputFileName & \texttt{#4} \\
+                \kw@TimeLimit & #5~\kw@seconds \\
+                \kw@MemoryLimit & #6~MiB \\
+            \end{tabular}
+        }
+        \nopagebreak
+        \par\vspace{\afterconstraints}
+    \fi
     
     % Prepare for the problem statement
     \problemtextfont\parindent=0mm%

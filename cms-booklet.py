@@ -222,6 +222,8 @@ if __name__ == '__main__':
 		for opt in args['set']:
 			try:
 				key, value = opt.split("=")
+				if value in ('True', 'False'):
+					value = eval(value)
 			except:
 				raise NotImplementedError
 			if key in contest_template_variables:
