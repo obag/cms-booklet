@@ -428,12 +428,11 @@
     % Add a line to the toc now, so that it is in the right page
     \addcontentsline{toc}{section}{#1 (\texttt{#2})}
 
-    
+    \nopagebreak
+    \par\vspace{\afterproblemhead}
+    \problemtextfont\parindent=6.5mm
     % Make the summary table
     \if@showsummary
-        \nopagebreak
-        \par\vspace{\afterproblemhead}
-        \problemtextfont\parindent=6.5mm
         \vbox{
             \begin{tabular}{l@{\extracolsep{1cm}}l}
                 %\kw@InputFileName & \texttt{#3} \\
