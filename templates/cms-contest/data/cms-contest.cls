@@ -443,8 +443,8 @@
             \end{tabular}
         }
         \nopagebreak
-        \par\vspace{\afterconstraints}
     \fi
+    \par\vspace{\afterconstraints}    
     
     % Prepare for the problem statement
     \problemtextfont\parindent=0mm%
