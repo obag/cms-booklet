@@ -119,7 +119,7 @@
 \exmpthreewidnote=0.30\textwidth
 \afterproblemhead=3mm
 \afterconstraints=2mm
-\logolength=23mm
+\logolength=16mm
 \logomargin=3mm
 
 %*********************************************************************
@@ -429,10 +429,12 @@
     \addcontentsline{toc}{section}{#1 (\texttt{#2})}
 
     \nopagebreak
-    \par\vspace{\afterproblemhead}
-    \problemtextfont\parindent=6.5mm
+
+    \problemtextfont
     % Make the summary table
     \if@showsummary
+        \par\vspace{\afterproblemhead}
+        \parindent=6.5mm
         \vbox{
             \begin{tabular}{l@{\extracolsep{1cm}}l}
                 %\kw@InputFileName & \texttt{#3} \\
@@ -462,6 +464,7 @@
     
     \Solution
     \BODY
+
     \afterpage{\nopagecolor}
 \fi
 }
