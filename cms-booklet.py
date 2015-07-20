@@ -260,6 +260,18 @@ if __name__ == '__main__':
 			for (key, value) in task_yaml.items():
 				if key in problem_template_variables:
 					problem_tpl_args[key] = value
+                        # Process manual --set options
+                        for opt in args['set']:
+                                try:
+                                        key, value = opt.split("=")
+                                        if value in ('True', 'False'):
+                                                value = eval(value)
+                                except:
+                                        raise NotImplementedError
+                                if key in problem_template_variables:
+                                        problem_tpl_args[key] = value
+                                else:
+                                        print "[w] No template variable named '%s'!" % key
 			problem_tpl_args['__language'] = language
 
 			print "[*] Problem template variables:"
