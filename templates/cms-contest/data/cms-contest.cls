@@ -482,7 +482,7 @@
         \hline
     }
 
-    \newcommand{\exmpfile}[2]{
+    \newcommand{\exmpfile}[2]{%
         \exmp{%
             \verbatiminput{##1}
         }{
