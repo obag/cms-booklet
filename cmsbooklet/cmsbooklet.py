@@ -26,6 +26,7 @@ import tempfile
 import shutil
 import subprocess
 import threading
+import pkg_resources
 from jinja2 import meta as jinja2_meta
 
 def fully_split(path):
@@ -92,8 +93,9 @@ def process_problem(raw_content):
 			lines[i] = '%' + lines[i]
 	return '\n'.join(lines), dependencies
 
-if __name__ == '__main__':
-        templates_dir = os.path.join(os.path.dirname(__file__), 'templates')
+
+def main():
+        templates_dir = pkg_resources.resource_filename("cmsbooklet.templates", "")
         if not os.path.exists(templates_dir):
                 templates_dir = os.path.join(sys.prefix, 'cms-booklet', 'templates')
         #print >> sys.stderr, "Using templates_dir %s" % (templates_dir)

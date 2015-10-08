@@ -17,27 +17,28 @@
 # limitations under the License.
 
 
-from distutils.core import setup
+from setuptools import setup, find_packages
 import os
 
-this_path = os.path.dirname(os.path.realpath(__file__))
-data_files = []
-for (path, dirs, files) in os.walk(os.path.join(this_path, 'templates')):
-	rel_path = path[len(this_path)+1:]
-	for file in files:
-		if file[0] != '.': # Don't copy hidden files
-			data_files += [(
-				os.path.join('cms-booklet',rel_path),
-				[os.path.join(rel_path, file)]
-			)]
+PACKAGE_DATA = {
+    "cmsbooklet.templates": [
+        os.path.join("cms-contest", "*.*"),
+        os.path.join("cms-contest", "data", "*.*"),
+        os.path.join("cms-contest", "data", "locale", "*.*"),
+    ],
+}
 
 setup(
-	name = 'cms-booklet',
-	version = '0.1',
-	description = 'cms-booklet: problem statement processor for CMS (Contest Management System)',
-	author = 'Gabriele Farina',
-	author_email = 'gabr.farina@gmail.com',
-
-	scripts = ['cms-booklet.py'],
-	data_files = data_files
+    name = 'cmsbooklet',
+    version = '0.1',
+    description = 'cms-booklet: problem statement processor for CMS (Contest Management System)',
+    author = 'Gabriele Farina',
+    author_email = 'gabr.farina@gmail.com',
+    packages=find_packages(),
+    package_data=PACKAGE_DATA,
+    entry_points={
+        "console_scripts": [
+            "cmsbooklet=cmsbooklet.cmsbooklet:main",
+        ]
+    },
 )
