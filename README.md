@@ -44,7 +44,7 @@ Usage
 Once installed, you can use the `cms-booklet.py` command like this: put yourself in a directory where a `contest.yaml` file is present, then run the following command.
 
 ```bash
-(my_venv) $ cms-booklet.py -t cms-contest -l italian contest.yaml
+(my_venv) $ cmsbooklet -t cms-contest -l italian contest.yaml
 ```
 
 Further options
