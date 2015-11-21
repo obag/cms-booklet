@@ -163,6 +163,9 @@ def main():
 		help = 'Delete working directories if they exist'
 	)
 	parser.add_argument(
+		'--only',
+		help = 'If set, it\'s the only task that will be processed')
+	parser.add_argument(
 		'-l', '--language',
 		default = 'english',
 		help = 'The language to be used')
@@ -245,6 +248,8 @@ def main():
 		additional_packages = []
 		contest_statics = []
 		for task in contest_yaml['tasks']:
+			if args['only'] and task != args["only"]:
+				continue
 			task_abspath = os.path.join(os.path.dirname(contest_abspath), task, 'task.yaml')
 			print "[>] Processing PROBLEM file: %s" % task_abspath
 			print "[i] Reading problem file"
