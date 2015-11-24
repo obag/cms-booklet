@@ -41,4 +41,5 @@ setup(
             "cmsbooklet=cmsbooklet.cmsbooklet:main",
         ]
     },
+    scripts=["scripts/mktesto"],
 )
