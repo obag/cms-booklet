@@ -483,17 +483,19 @@
     \ttfamily\obeylines\obeyspaces\frenchspacing
     %
     \newcommand{\exmp}[2]{%
-        \begin{minipage}[t]{\exmpwidinf}\rightskip=0pt plus 1fill\relax##1\medskip\end{minipage}&
-        \begin{minipage}[t]{\exmpwidouf}\rightskip=0pt plus 1fill\relax##2\medskip\end{minipage}\\
-        \hline
+        \begin{minipage}[t]{\exmpwidinf}\rightskip=0pt plus
+        1fill\relax##1\end{minipage}&%
+        \begin{minipage}[t]{\exmpwidouf}\rightskip=0pt plus
+        1fill\relax##2\end{minipage}\\%
+        \hline%
     }
 
     \newcommand{\exmpfile}[2]{%
-        \exmp{%
-            \verbatiminput{##1}
-        }{
-            \verbatiminput{##2}
-        }%
+        \begin{minipage}[t]{\exmpwidinf}\rightskip=0pt plus%
+        1fill\relax\lstinputlisting[aboveskip=0,breaklines]{##1}\end{minipage}&%
+        \begin{minipage}[t]{\exmpwidouf}\rightskip=0pt plus%
+        1fill\relax\lstinputlisting[aboveskip=0,breaklines]{##2}\end{minipage}\\%
+        \hline%
     }
 
     \begin{tabular}{|l|l|}
@@ -510,37 +512,6 @@
 %
 % this is used for creating full-width examples. input and output are stacked
 % vertically instead of horizontally as with the example environment.
-
-\newenvironment{examplewide}{%
-    \ttfamily\obeylines\obeyspaces\frenchspacing
-
-    \newcommand{\exmp}[2]{
-        \begin{tabular}{|c|}
-            \hline
-            \multicolumn{1}{|c|}{\bf\texttt{\this@inputfilename}}\\
-            \hline
-            \begin{minipage}[t]{\exmpwidewid}\rightskip=0pt plus 1fill\relax
-                ##1
-            \medskip\end{minipage}\\
-            \hline
-            \multicolumn{1}{|c|}{\bf\texttt{\this@outputfilename}}\\%
-            \hline
-            \begin{minipage}[t]{\exmpwidewid}\rightskip=0pt plus 1fill\relax
-                ##2    
-            \medskip\end{minipage}\\%
-            \hline
-        \end{tabular}
-    }
-
-    \newcommand{\exmpfile}[2]{
-        \exmp{
-            \verbatiminput{##1}
-        }{
-            \verbatiminput{##2}
-        }%
-    }
-}{
-}
 
 % end of cms-style.sty
 \makeatother
