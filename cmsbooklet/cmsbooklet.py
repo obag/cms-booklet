@@ -222,7 +222,11 @@ def main():
 		contest_yaml = yaml.load(open(contest_abspath).read())
 		for (key, value) in contest_yaml.items():
 			if key in contest_template_variables:
+                            if value:
 				contest_tpl_args[key] = value
+                                print "[d] Overriding value for key \"%s\". Setting \"%s\"." % (key, value)
+                            else:
+                                print "[i] Empty value for key \"%s\". Skipping override." % key
 		# Process manual --set options
 		for opt in args['set']:
 			try:
@@ -231,8 +235,12 @@ def main():
 					value = eval(value)
 			except:
 				raise NotImplementedError
-			if key in contest_template_variables:
+                        if key in contest_template_variables:
+                            if value:
 				contest_tpl_args[key] = value
+                                print "[d] Overriding value for key \"%s\". Setting \"%s\"." % (key, value)
+                            else:
+                                print "[i] Empty value for key \"%s\". Skipping override." % key
 			else:
 				print "[w] No template variable named '%s'!" % key
 		contest_tpl_args['__language'] = language
@@ -260,13 +268,22 @@ def main():
 			if 'problem' in template_defaults:
 				for var in template_defaults['problem']:
 					if var in problem_tpl_args:
-						problem_tpl_args[var] = template_defaults['problem'][var]
+                                                if value:
+                                                    problem_tpl_args[var] = template_defaults['problem'][var]
+                                                    print "[d] Overriding value for key \"%s\" and task \"%s\". Setting \"%s\"." % (key, task, value)
+                                                else:
+                                                    print "[i] Empty value for key \"%s\" and task \"%s\". Skipping override." % (key, task)
 
 			# Process the task.yaml file
 			task_yaml = yaml.load(open(task_abspath).read())
 			for (key, value) in task_yaml.items():
 				if key in problem_template_variables:
-					problem_tpl_args[key] = value
+				    if value:
+                                        print "[d] Overriding value for key \"%s\" and task \"%s\". Setting \"%s\"." % (key, task, value)
+                                        problem_tpl_args[key] = value
+                                    else:
+                                        print "[i] Empty value for key \"%s\" and task \"%s\". Skipping override." % (key, task)
+
                         # Process manual --set options
                         for opt in args['set']:
                                 try:
@@ -276,7 +293,12 @@ def main():
                                 except:
                                         raise NotImplementedError
                                 if key in problem_template_variables:
+                                    if value:
+                                        print "[d] Overriding value for key \"%s\" and task \"%s\". Setting \"%s\"." % (key, task, value)
                                         problem_tpl_args[key] = value
+                                    else:
+                                        print "[i] Empty value for key \"%s\" and task \"%s\". Skipping override." % (key, task)
+
                                 else:
                                         print "[w] No template variable named '%s'!" % key
 			problem_tpl_args['__language'] = language
@@ -360,7 +382,7 @@ def main():
 
 		if args['keep']:
 			target_dir = os.path.join(os.path.dirname(contest_abspath), 'booklet', '_%s_files' % language)
-			if os.path.exists(target_dir): 
+			if os.path.exists(target_dir):
 				if args['force']:
 					print "[w] Deleting old directory"
 					shutil.rmtree(target_dir)
@@ -389,7 +411,7 @@ def main():
 		)
 
 		errors = False
-		if not args['no_compile']:	
+		if not args['no_compile']:
 			print "[>] Compiling tex file"
 			proc = subprocess.Popen(
 				['latexmk', '-f', '-interaction=nonstopmode', '-pdf', target_booklet_file],
@@ -410,7 +432,7 @@ def main():
 			else:
 				print "[w] PDF file not created. Rerun with --keep or view log files in %s" % target_dir
 				errors = True
-		
+
 		if not args['keep'] and not errors:
 			print "[i] Deleting working directory"
 			shutil.rmtree(target_dir)
