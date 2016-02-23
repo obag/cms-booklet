@@ -363,9 +363,12 @@ def main():
 					stdout = open(os.devnull, "w"),
 					stderr = open(os.devnull, "w")
 				)
-				timer = threading.Timer(60, lambda: proc.kill())
+				timer = threading.Timer(60, proc.kill)
 				timer.start()
-				proc.wait()
+				try:
+					proc.wait()
+				except KeyboardInterrupt:
+					proc.kill()
 				timer.cancel()
 				target_pdf_file = os.path.join(target_dir, 'statement.pdf')
 				if os.path.exists(target_pdf_file):
@@ -419,9 +422,12 @@ def main():
 				stdout = open(os.devnull, "w"),
 				stderr = open(os.devnull, "w")
 			)
-			timer = threading.Timer(60, lambda: proc.kill())
+			timer = threading.Timer(60, proc.kill)
 			timer.start()
-			proc.wait()
+			try:
+				proc.wait()
+			except KeyboardInterrupt:
+				proc.kill()
 			timer.cancel()
 
 			target_pdf_file = os.path.join(target_dir, 'booklet.pdf')
