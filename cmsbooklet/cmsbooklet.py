@@ -383,6 +383,10 @@ def main():
 				print "[i] Deleting working directory"
 				shutil.rmtree(target_dir)
 
+		if args['only']:
+			# No booklet
+			continue
+
 		if args['keep']:
 			target_dir = os.path.join(os.path.dirname(contest_abspath), 'booklet', '_%s_files' % language)
 			if os.path.exists(target_dir):
