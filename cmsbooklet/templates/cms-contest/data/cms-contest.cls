@@ -1,3 +1,4 @@
+
 % cms-contest
 %
 % Copyright (c) 2015 Gabriele Farina (gabr.farina@gmail.com)
@@ -170,7 +171,7 @@
     \end{tabular}%
 }
 \lfoot{}\rfoot{}
-\cfoot{\small 
+\cfoot{\small
     \ifthenelse{\equal{\last@problemauthor}{}}%
     {%
         \gdef\footercontent{%
@@ -180,7 +181,7 @@
             {\hfill}%
             \kw@Page\ \thepage\ \kw@of\ \pageref{LastPage}\hfill%
         }%
-    }%    
+    }%
     {%
         \gdef\footercontent{%
             \if@showproblemletter\kw@Problem~\Alph{@problemcounter}.\ \fi%
@@ -209,7 +210,7 @@
 \AtEndDocument{\clearpage\lastpage@putlabel}%
 
 
-% Delete space after verbatiminput 
+% Delete space after verbatiminput
 \addto@hook{\every@verbatim}{\topsep=0pt\relax}
 
 %*********************************************************************
@@ -291,7 +292,7 @@
             \vspace*{\fill}%
             \clearpage%
         \fi%
-    \fi% 
+    \fi%
 }
 
 %*********************************************************************
@@ -422,7 +423,7 @@
     \gdef\this@inputfilename{#3}
     \gdef\this@outputfilename{#4}
     \gdef\this@problemrevnumber{}
-    
+
     % Problem title
     \noindent
     \refstepcounter{@problemcounter}
@@ -451,8 +452,8 @@
         }
         \nopagebreak
     \fi
-    \par\vspace{\afterconstraints}    
-    
+    \par\vspace{\afterconstraints}
+
     % Prepare for the problem statement
     \problemtextfont\parindent=0mm%
 }{
@@ -467,7 +468,7 @@
 \if@showsolutions
     \definecolor{backcolor}{gray}{0.95}
     \pagecolor{backcolor}
-    
+
     \Solution
     \BODY
 
@@ -483,18 +484,34 @@
     \ttfamily\obeylines\obeyspaces\frenchspacing
     %
     \newcommand{\exmp}[2]{%
-        \begin{minipage}[t]{\exmpwidinf}\rightskip=0pt plus
-        1fill\relax##1\end{minipage}&%
-        \begin{minipage}[t]{\exmpwidouf}\rightskip=0pt plus
-        1fill\relax##2\end{minipage}\\%
+        \begin{minipage}[t]{\exmpwidinf}%
+            \rightskip=0pt plus 1fill\relax%
+            ##1%
+        \end{minipage}&%
+        \begin{minipage}[t]{\exmpwidouf}%
+            \rightskip=0pt plus 1fill\relax%
+            ##2%
+        \end{minipage}\\%
         \hline%
     }
 
-    \newcommand{\exmpfile}[2]{%
-        \begin{minipage}[t]{\exmpwidinf}\rightskip=0pt plus%
-        1fill\relax\lstinputlisting[aboveskip=0,breaklines]{##1}\end{minipage}&%
-        \begin{minipage}[t]{\exmpwidouf}\rightskip=0pt plus%
-        1fill\relax\lstinputlisting[aboveskip=0,breaklines]{##2}\end{minipage}\\%
+    \newcommand{\exmpfile}[3][]{%
+        \begin{minipage}[t]{\exmpwidinf}%
+            \rightskip=0pt plus 1fill\relax%
+            \ifthenelse{\equal{##1}{nowrap}}{%
+                \lstinputlisting[aboveskip=0]{##2}%
+            }{%
+                \lstinputlisting[aboveskip=0,breaklines]{##2}%
+            }%
+        \end{minipage}&%
+        \begin{minipage}[t]{\exmpwidouf}%
+            \rightskip=0pt plus 1fill\relax%
+            \ifthenelse{\equal{##1}{nowrap}}{%
+                \lstinputlisting[aboveskip=0]{##3}%
+            }{%
+                \lstinputlisting[aboveskip=0,breaklines]{##3}%
+            }%
+        \end{minipage}\\%
         \hline%
     }
 
@@ -507,11 +524,6 @@
 }{
     \end{tabular}
 }
-
-% examplewide
-%
-% this is used for creating full-width examples. input and output are stacked
-% vertically instead of horizontally as with the example environment.
 
 % end of cms-style.sty
 \makeatother
