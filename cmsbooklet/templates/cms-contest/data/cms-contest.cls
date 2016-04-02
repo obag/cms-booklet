@@ -164,7 +164,7 @@
             }
             \vskip 2.5mm \hrule\vskip 2.5mm%
             {\sffamily\makebox[0pt][l]{%
-                \this@contestlocation\unskip\ifthenelse{\equal{\this@contestdate}{}}{}{, \this@contestdate}}%
+                \this@contestlocation\unskip\ifthenelse{\equal{\this@contestdate}{}}{}{\ifthenelse{\equal{\this@contestlocation}{}}{}{, }\this@contestdate}}%
             \hfill\ttfamily\bfseries\makebox[0pt][r]{\this@problemshorttitle\enskip$\bullet$\enskip\@languagecode\ifthenelse{\equal{\this@problemrevnumber}{}}{}{\enskip$\bullet$\enskip\kw@revision \this@problemrevnumber%
             }}}
         \end{minipage}%
