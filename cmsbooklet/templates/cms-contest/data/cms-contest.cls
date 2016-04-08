@@ -409,12 +409,13 @@
 %            4) Output filename     e.g. stdout
 %            5) Time limit          e.g. 1 second
 %            6) Memory limit        e.g. 256 Mib
+%            7) Difficulty          e.g. 2
 %
 
-\newenvironment{problem}[6]{
+\newenvironment{problem}[7]{
     \setcounter{figure}{0}
 
-    % Store values so that they don't go lost
+    % Store values so that they dont go lost
     \gdef\last@problemauthor{\this@problemauthor}
     \gdef\last@problemtitle{\this@problemtitle}
     \gdef\this@problemtitle{#1}
@@ -448,6 +449,7 @@
                 %\kw@OutputFileName & \texttt{#4} \\
                 \kw@TimeLimit & #5~\kw@seconds \\
                 \kw@MemoryLimit & #6~MiB \\
+		\kw@Difficulty & #7\\
             \end{tabular}
         }
         \nopagebreak
