@@ -84,6 +84,7 @@ def copy_static(src, dst, force_content=False):
 
 def process_problem(raw_content):
 	dependencies = []
+	asy_graphics = []
 
 	lines = raw_content.split('\n')
 	for i in xrange(len(lines)):
@@ -91,7 +92,14 @@ def process_problem(raw_content):
 		if line[:11] == '\\usepackage':
 			dependencies += [line]
 			lines[i] = '%' + lines[i]
-	return '\n'.join(lines), dependencies
+		elif '\\includegraphics' in line:
+			# Extract 'filename.pdf' from '\includegraphics[options]{filename.pdf}'
+			line = line[line.find('\\includegraphics'):]
+			line = line[line.find('{') + 1:]
+			line = line[:line.find('}')]
+			if line[:3] == 'pdf':
+				asy_graphics += [line]
+	return '\n'.join(lines), dependencies, asy_graphics
 
 
 def main():
@@ -338,7 +346,7 @@ def main():
 
 			print "[i] Reading problem statement file (%s)" % problem_statement_file
 			raw_problem_content = open(problem_statement_file).read().decode('utf8')
-			problem_content, problem_dependencies = process_problem(raw_problem_content)
+			problem_content, problem_dependencies, asy_graphics = process_problem(raw_problem_content)
 			additional_packages += problem_dependencies
 			for package in problem_dependencies:
 				print "[-] Additional package: %s" % package
@@ -356,6 +364,34 @@ def main():
 			)
 
 			if not args['no_compile']:
+
+				if len(asy_graphics) > 0:
+					print "[>] Compiling asymptote graphics"
+					for asy_file in asy_graphics:
+						# Compile 'filename.asy' to 'filename.pdf'
+						proc = subprocess.Popen(
+							['asy', '-f', 'pdf', os.path.basename(asy_file)[:-3] + 'asy'],
+							cwd = os.path.join(target_dir, os.path.dirname(asy_file)),
+							stdout = open(os.devnull, "w"),
+							stderr = open(os.devnull, "w")
+						)
+						timer = threading.Timer(60, proc.kill)
+						timer.start()
+						try:
+							proc.wait()
+						except KeyboardInterrupt:
+							proc.kill()
+						timer.cancel()
+
+					errors = False
+					for asy_file in asy_graphics:
+						if not os.path.exists(os.path.join(target_dir, asy_file)):
+							print "[w] Asymptote graphics file not compiled"
+							errors = True
+							break
+					if not errors:
+						print "[i] Asymptote graphics succesfully compiled"
+
 				print "[>] Compiling tex file"
 				proc = subprocess.Popen(
 					['latexmk', '-f', '-interaction=nonstopmode', '-pdf', target_statement_file],
