@@ -27,6 +27,7 @@ import shutil
 import subprocess
 import threading
 import pkg_resources
+import re
 from jinja2 import meta as jinja2_meta
 
 def fully_split(path):
@@ -92,13 +93,12 @@ def process_problem(raw_content):
 		if line[:11] == '\\usepackage':
 			dependencies += [line]
 			lines[i] = '%' + lines[i]
-		elif '\\includegraphics' in line:
-			# Extract 'filename.pdf' from '\includegraphics[options]{filename.pdf}'
-			line = line[line.find('\\includegraphics'):]
-			line = line[line.find('{') + 1:]
-			line = line[:line.find('}')]
-			if line[:3] == 'pdf':
-				asy_graphics += [line]
+
+		# Extract 'filename.pdf' from '\includegraphics[options]{filename.pdf}'
+		m = re.search("\\includegraphics.*\{([^\}]+\.pdf)\}", line)
+		if m:
+			asy_graphics += [m.group(1)]
+
 	return '\n'.join(lines), dependencies, asy_graphics
 
 
@@ -364,7 +364,6 @@ def main():
 			)
 
 			if not args['no_compile']:
-
 				if len(asy_graphics) > 0:
 					print "[>] Compiling asymptote graphics"
 					for asy_file in asy_graphics:
