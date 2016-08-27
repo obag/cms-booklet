@@ -263,6 +263,7 @@ def main():
 		rendered_problem_templates = []
 		additional_packages = []
 		contest_statics = []
+                contest_asy_graphics = []
 		for task in contest_yaml['tasks']:
 			if args['only'] and task != args["only"]:
 				continue
@@ -348,6 +349,7 @@ def main():
 			raw_problem_content = open(problem_statement_file).read().decode('utf8')
 			problem_content, problem_dependencies, asy_graphics = process_problem(raw_problem_content)
 			additional_packages += problem_dependencies
+                        contest_asy_graphics += asy_graphics
 			for package in problem_dependencies:
 				print "[-] Additional package: %s" % package
 
@@ -457,6 +459,34 @@ def main():
 
 		errors = False
 		if not args['no_compile']:
+			#Compile asymptote graphics
+                        if len(contest_asy_graphics) > 0:
+				print "[>] Compiling asymptote graphics"
+				for asy_file in contest_asy_graphics:
+					# Compile 'filename.asy' to 'filename.pdf'
+					proc = subprocess.Popen(
+						['asy', '-f', 'pdf', os.path.basename(asy_file)[:-3] + 'asy'],
+						cwd = os.path.join(target_dir, os.path.dirname(asy_file)),
+						stdout = open(os.devnull, "w"),
+						stderr = open(os.devnull, "w")
+					)
+					timer = threading.Timer(60, proc.kill)
+					timer.start()
+					try:
+						proc.wait()
+					except KeyboardInterrupt:
+						proc.kill()
+					timer.cancel()
+
+				errors = False
+				for asy_file in asy_graphics:
+					if not os.path.exists(os.path.join(target_dir, asy_file)):
+						print "[w] Asymptote graphics file not compiled"
+						errors = True
+						break
+				if not errors:
+					print "[i] Asymptote graphics succesfully compiled"
+
 			print "[>] Compiling tex file"
 			proc = subprocess.Popen(
 				['latexmk', '-f', '-interaction=nonstopmode', '-pdf', target_booklet_file],
