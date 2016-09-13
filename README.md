@@ -1,10 +1,10 @@
-cms-booklet
-===========
+cmsbooklet
+==========
 
 Introduction
 ------------
 
-cms-booklet is a tool meant to facilitate the typesetting of olympic problems. It is designed to work well with [CMS](https://github.com/cms-dev/cms), the Contest Management System.
+cmsbooklet is a tool meant to facilitate the typesetting of olympic problems. It is designed to work well with [CMS](https://github.com/cms-dev/cms), the Contest Management System.
 
 Dependencies
 ------------
@@ -14,7 +14,7 @@ Ensure that you have the texlive suite installed, and check that the latexmk com
 Installation
 ------------
 
-To install the `cms-booklet.py` command, we recommend that you use a Python *virtual environment*. So, ensure that you have the `python-virtualenv` package installed. Then run:
+To install the `cmsbooklet` command, we recommend that you use a Python *virtual environment*. So, ensure that you have the `python-virtualenv` package installed. Then run:
 
 ```bash
 $ virtualenv -p python2 ~/my_venv
@@ -32,16 +32,16 @@ You should now see that the command line prompt has changed to something like:
 (my_venv) $
 ```
 
-Now you can freely install cms-booklet by issuing this command:
+Now you can freely install cmsbooklet by issuing this command:
 
 ```bash
-(my_venv) $ pip install https://github.com/algorithm-ninja/binder/archive/master.zip
+(my_venv) $ pip install cmsbooklet
 ```
 
 Usage
 -----
 
-Once installed, you can use the `cms-booklet.py` command like this: put yourself in a directory where a `contest.yaml` file is present, then run the following command.
+Once installed, you can use the `cmsbooklet` command like this: put yourself in a directory where a `contest.yaml` file is present, then run the following command.
 
 ```bash
 (my_venv) $ cmsbooklet -t cms-contest -l italian contest.yaml
@@ -51,5 +51,5 @@ Further options
 ---------------
 
 // TODO
-cms-booklet supports these flags:
+cmsbooklet supports these flags:
   - `--keep`: keeps working files 
