@@ -42,4 +42,8 @@ setup(
         ]
     },
     scripts=["scripts/mktesto"],
+    install_requires=[
+        "pyyaml",
+        "jinja2",
+    ],
 )
