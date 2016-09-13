@@ -20,6 +20,8 @@ To install the `cmsbooklet` command, we recommend that you use a Python *virtual
 * `sudo apt-get install virtualenv` on **Ubuntu 16.04**.
 * `sudo pacman -S virtualenv` on **Arch Linux**.
 
+Then run:
+
 ```bash
 $ virtualenv -p python2 ~/my_venv
 ```
