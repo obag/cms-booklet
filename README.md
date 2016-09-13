@@ -14,7 +14,11 @@ Ensure that you have the texlive suite installed, and check that the latexmk com
 Installation
 ------------
 
-To install the `cmsbooklet` command, we recommend that you use a Python *virtual environment*. So, ensure that you have the `python-virtualenv` package installed. Then run:
+To install the `cmsbooklet` command, we recommend that you use a Python *virtual environment*. So, ensure that you have the `virtualenv` command available. You can install it by typing:
+
+* `sudo apt-get install python-virtualenv` on **Ubuntu 14.04**.
+* `sudo apt-get install virtualenv` on **Ubuntu 16.04**.
+* `sudo pacman -S virtualenv` on **Arch Linux**.
 
 ```bash
 $ virtualenv -p python2 ~/my_venv
