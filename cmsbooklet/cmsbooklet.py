@@ -411,7 +411,9 @@ def main():
 					shutil.copyfile(target_pdf_file, problem_pdf_file)
 					errors = False
 				else:
-					print "[w] PDF file not created. Rerun with --keep or view log files in %s" % target_dir
+					print "[w] PDF file not created. View log files in %s (or rerun with --keep)" % target_dir
+					print "[w] Hint: if you're on Ubuntu, ensure that you have: texlive-full"
+					print "[w] Hint: if you're on Arch Linux, ensure that you have: texlive-most texlive-lang"
 					errors = True
 
 			if not args['keep'] and not errors:
