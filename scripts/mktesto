@@ -3,4 +3,14 @@
 this_task=$(basename `pwd`)
 
 cd ..
-cmsbooklet -t cms-contest -l italian --only $this_task "$@" contest.yaml
+
+if [ -f contest.yaml ]
+then
+    cmsbooklet -t cms-contest -l italian --only $this_task "$@" contest.yaml
+else
+    YAML=$(mktemp --tmpdir=`pwd`)
+    echo "tasks:" >> $YAML
+    echo " - $this_task" >> $YAML
+    cmsbooklet -t cms-contest -l italian --only $this_task "$@" $YAML
+    rm $YAML
+fi
