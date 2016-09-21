@@ -386,6 +386,7 @@ def main():
 					for asy_file in asy_graphics:
 						if not os.path.exists(os.path.join(target_dir, asy_file)):
 							print "[w] Asymptote graphics file not compiled"
+							print "[w] Hint: ensure you have installed: asymptote"
 							errors = True
 							break
 					if not errors:
