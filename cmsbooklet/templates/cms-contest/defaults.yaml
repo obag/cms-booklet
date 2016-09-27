@@ -9,6 +9,3 @@ contest:
 problem:
     infile: 'stdin'
     outfile: 'stdout'
-    time_limit: '1.0'
-    memory_limit: '256'
-    difficulty: '1'
