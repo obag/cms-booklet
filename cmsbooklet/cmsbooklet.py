@@ -415,6 +415,7 @@ def main():
 					print "[w] PDF file not created. View log files in %s (or rerun with --keep)" % target_dir
 					print "[w] Hint: if you're on Ubuntu, ensure that you have: texlive-full"
 					print "[w] Hint: if you're on Arch Linux, ensure that you have: texlive-most texlive-lang"
+					print "[w] Hint: ensure that all referenced files exists (e.g. sample input/output files inside 'testo')"
 					errors = True
 
 			if not args['keep'] and not errors:
