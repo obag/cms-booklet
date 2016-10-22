@@ -230,11 +230,12 @@ def main():
 		contest_yaml = yaml.load(open(contest_abspath).read())
 		for (key, value) in contest_yaml.items():
 			if key in contest_template_variables:
-                            if value:
-				contest_tpl_args[key] = value
-                                print "[d] Overriding value for key \"%s\". Setting \"%s\"." % (key, value)
-                            else:
-                                print "[i] Empty value for key \"%s\". Skipping override." % key
+				if value is not None:
+					contest_tpl_args[key] = value
+					print "[d] Overriding value for key \"%s\". Setting \"%s\"." % (key, value)
+				else:
+					print "[i] Empty value for key \"%s\". Skipping override." % key
+
 		# Process manual --set options
 		for opt in args['set']:
 			try:
@@ -243,12 +244,12 @@ def main():
 					value = eval(value)
 			except:
 				raise NotImplementedError
-                        if key in contest_template_variables:
-                            if value:
-				contest_tpl_args[key] = value
-                                print "[d] Overriding value for key \"%s\". Setting \"%s\"." % (key, value)
-                            else:
-                                print "[i] Empty value for key \"%s\". Skipping override." % key
+				if key in contest_template_variables:
+					if value is not None:
+						contest_tpl_args[key] = value
+						print "[d] Overriding value for key \"%s\". Setting \"%s\"." % (key, value)
+					else:
+						print "[i] Empty value for key \"%s\". Skipping override." % key
 			else:
 				print "[w] No template variable named '%s'!" % key
 		contest_tpl_args['__language'] = language
@@ -276,21 +277,21 @@ def main():
 			if 'problem' in template_defaults:
 				for var in template_defaults['problem']:
 					if var in problem_tpl_args:
-                                                if value:
-                                                    problem_tpl_args[var] = template_defaults['problem'][var]
-                                                    print "[d] Overriding value for key \"%s\" and task \"%s\". Setting \"%s\"." % (key, task, value)
-                                                else:
-                                                    print "[i] Empty value for key \"%s\" and task \"%s\". Skipping override." % (key, task)
+						if value is not None:
+							problem_tpl_args[var] = template_defaults['problem'][var]
+							print "[d] Overriding value for key \"%s\" and task \"%s\". Setting \"%s\"." % (key, task, value)
+						else:
+							print "[i] Empty value for key \"%s\" and task \"%s\". Skipping override." % (key, task)
 
 			# Process the task.yaml file
 			task_yaml = yaml.load(open(task_abspath).read())
 			for (key, value) in task_yaml.items():
 				if key in problem_template_variables:
-				    if value:
-                                        print "[d] Overriding value for key \"%s\" and task \"%s\". Setting \"%s\"." % (key, task, value)
-                                        problem_tpl_args[key] = value
-                                    else:
-                                        print "[i] Empty value for key \"%s\" and task \"%s\". Skipping override." % (key, task)
+					if value is not None:
+						print "[d] Overriding value for key \"%s\" and task \"%s\". Setting \"%s\"." % (key, task, value)
+						problem_tpl_args[key] = value
+					else:
+						print "[i] Empty value for key \"%s\" and task \"%s\". Skipping override." % (key, task)
 
                         # Process manual --set options
                         for opt in args['set']:
@@ -301,14 +302,19 @@ def main():
                                 except:
                                         raise NotImplementedError
                                 if key in problem_template_variables:
-                                    if value:
+                                    if value is not None:
                                         print "[d] Overriding value for key \"%s\" and task \"%s\". Setting \"%s\"." % (key, task, value)
                                         problem_tpl_args[key] = value
                                     else:
                                         print "[i] Empty value for key \"%s\" and task \"%s\". Skipping override." % (key, task)
-
+                                elif key in contest_template_variables:
+                                    if value is not None:
+                                        print "[d] Overriding value for contest key \"%s\" and task \"%s\". Setting \"%s\"." % (key, task, value)
+                                        contest_tpl_args[key] = value
+                                    else:
+                                        print "[i] Empty value for contest key \"%s\" and task \"%s\". Skipping override." % (key, task)
                                 else:
-                                        print "[w] No template variable named '%s'!" % key
+                                    print "[w] No template variable named '%s'!" % key
 			problem_tpl_args['__language'] = language
 
 			print "[*] Problem template variables:"
