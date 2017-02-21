@@ -7,6 +7,7 @@
 \usepackage[((( fontenc )))]{fontenc}
 \usepackage[((( inputenc )))]{inputenc}
 \usepackage[((( __language )))]{babel}
+\usepackage{bookmark}
 
 ((* for __package in __additional_packages *))
 	((( __package )))
