@@ -369,6 +369,8 @@ def main():
 				).encode('utf8')
 			)
 
+                        errors = False
+
 			if not args['no_compile']:
 				if len(asy_graphics) > 0:
 					print "[>] Compiling asymptote graphics"
@@ -388,7 +390,6 @@ def main():
 							proc.kill()
 						timer.cancel()
 
-					errors = False
 					for asy_file in asy_graphics:
 						if not os.path.exists(os.path.join(target_dir, asy_file)):
 							print "[w] Asymptote graphics file not compiled"
