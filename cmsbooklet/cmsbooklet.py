@@ -409,7 +409,6 @@ def main():
 						os.rename(os.path.join(target_dir, asy_file[:-4] + '-crop.pdf'),
 								os.path.join(target_dir, asy_file[:-4] + '.pdf'))
 
-					errors = False
 					for asy_file in asy_graphics:
 						if not os.path.exists(os.path.join(target_dir, asy_file)):
 							print "[w] Asymptote graphics file not compiled"
