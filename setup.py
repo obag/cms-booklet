@@ -30,7 +30,7 @@ PACKAGE_DATA = {
 
 setup(
     name = 'cmsbooklet',
-    version = '0.9',
+    version = '0.10',
     description = 'cms-booklet: problem statement processor for CMS (Contest Management System)',
     author = 'Gabriele Farina',
     author_email = 'gabr.farina@gmail.com',
