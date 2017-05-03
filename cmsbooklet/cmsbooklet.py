@@ -492,7 +492,7 @@ def main():
 				for asy_file in contest_asy_graphics:
 					# Compile 'filename.asy' to 'filename.pdf'
 					proc = subprocess.Popen(
-						['asy', '-f', 'pdf', os.path.basename(asy_file)[:-3] + 'asy'],
+						['asy', '-f', 'pdf', os.path.basename(asy_file)[:-4] + '.asy'],
 						cwd = os.path.join(target_dir, os.path.dirname(asy_file)),
 						stdout = open(os.devnull, "w"),
 						stderr = open(os.devnull, "w")
@@ -504,6 +504,25 @@ def main():
 					except KeyboardInterrupt:
 						proc.kill()
 					timer.cancel()
+
+                                        # Crop 'filename.pdf' to 'filename-crop.pdf'
+                                        proc = subprocess.Popen(
+                                                ['pdfcrop', os.path.basename(asy_file)[:-4] + '.pdf'],
+                                                cwd = os.path.join(target_dir, os.path.dirname(asy_file)),
+                                                stdout = open(os.devnull, "w"),
+                                                stderr = open(os.devnull, "w")
+                                        )
+                                        timer = threading.Timer(60, proc.kill)
+                                        timer.start()
+                                        try:
+                                                proc.wait()
+                                        except KeyboardInterrupt:
+                                                proc.kill()
+                                        timer.cancel()
+
+                                        # Rename 'filename-crop.pdf' to 'filename.pdf'
+                                        os.rename(os.path.join(target_dir, asy_file[:-4] + '-crop.pdf'),
+                                                        os.path.join(target_dir, asy_file[:-4] + '.pdf'))
 
 				errors = False
 				for asy_file in asy_graphics:
