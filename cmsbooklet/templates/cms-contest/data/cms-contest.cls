@@ -103,13 +103,13 @@
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
-\headheight=20mm
+\headheight=-5mm
 \headsep=8mm
 \parindent=0mm
 \parskip=6pt
 \hoffset=-24mm
 \voffset=-20mm
-\textheight=233mm
+\textheight=258mm
 \textwidth=175mm
 
 \exmpwidinf=0.475\textwidth
@@ -146,30 +146,9 @@
 %                           Internal macros                          *
 %*********************************************************************
 
-% Define the header structure
+
 \lhead{}\rhead{}
-\chead{%
-	\if@showlogo\else\setlength{\logolength}{0mm}\setlength{\logomargin}{0mm}\fi
-    \begin{tabular}{@{}p{\logolength+\logomargin}@{}p{\textwidth-\logolength-\logomargin}@{}}%
-        \begin{minipage}[b]{\logolength}%
-            \if@showlogo\includegraphics[width=\logolength]{\this@contestlogo}\fi
-        \end{minipage} &%
-           \begin{minipage}[b]{\textwidth-\logolength-\logomargin}%
-            {\sffamily\Large
-                \this@contestname%
-                \ifthenelse{\equal{\this@contestday}{}} %
-                {}{%
-                	\hfill\makebox[0pt][r]{\kw@Day~\this@contestday}%
-                }%
-            }
-            \vskip 2.5mm \hrule\vskip 2.5mm%
-            {\sffamily\makebox[0pt][l]{%
-                \this@contestlocation\unskip\ifthenelse{\equal{\this@contestdate}{}}{}{\ifthenelse{\equal{\this@contestlocation}{}}{}{, }\this@contestdate}}%
-            \hfill\ttfamily\bfseries\makebox[0pt][r]{\this@problemshorttitle\enskip$\bullet$\enskip\@languagecode\ifthenelse{\equal{\this@problemrevnumber}{}}{}{\enskip$\bullet$\enskip\kw@revision \this@problemrevnumber%
-            }}}
-        \end{minipage}%
-    \end{tabular}%
-}
+\chead{}
 \lfoot{}\rfoot{}
 \cfoot{\small
     \ifthenelse{\equal{\last@problemauthor}{}}%
@@ -424,6 +403,30 @@
     \gdef\this@inputfilename{#3}
     \gdef\this@outputfilename{#4}
     \gdef\this@problemrevnumber{}
+
+    % Header
+    \if@showlogo\else\setlength{\logolength}{0mm}\setlength{\logomargin}{0mm}\fi
+    \begin{tabular}{@{}p{\logolength+\logomargin}@{}p{\textwidth-\logolength-\logomargin}@{}}%
+        \begin{minipage}[b]{\logolength}%
+            \if@showlogo\includegraphics[width=\logolength]{\this@contestlogo}\fi
+        \end{minipage} &%
+           \begin{minipage}[b]{\textwidth-\logolength-\logomargin}%
+            {\sffamily\Large
+                \this@contestname%
+                \ifthenelse{\equal{\this@contestday}{}} %
+                {}{%
+                    \hfill\makebox[0pt][r]{\kw@Day~\this@contestday}%
+                }%
+            }
+            \vskip 2.5mm \hrule\vskip 2.5mm%
+            {\sffamily\makebox[0pt][l]{%
+                \this@contestlocation\unskip\ifthenelse{\equal{\this@contestdate}{}}{}{\ifthenelse{\equal{\this@contestlocation}{}}{}{, }\this@contestdate}}%
+            \hfill\ttfamily\bfseries\makebox[0pt][r]{\this@problemshorttitle\enskip$\bullet$\enskip\@languagecode\ifthenelse{\equal{\this@problemrevnumber}{}}{}{\enskip$\bullet$\enskip\kw@revision \this@problemrevnumber%
+            }}}
+        \end{minipage}%
+    \end{tabular}%
+
+    \vskip 5mm
 
     % Problem title
     \noindent
