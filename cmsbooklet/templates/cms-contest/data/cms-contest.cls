@@ -68,7 +68,7 @@
 \DeclareOption{problemnumbers}{\@showproblemnumbertrue}
 \DeclareOption{intentionallyblankpages}{\@intentionallyblankpagestrue}
 \DeclareOption{showsolutions}{\@showsolutionstrue}
-\DeclareOption{showsummary}{\@showsummarytrue}
+\DeclareOption{showsummary}{\@showsummaryfalse}
 
 % Language support
 \gdef\@languagecode{EN}
