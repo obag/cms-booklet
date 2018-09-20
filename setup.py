@@ -1,8 +1,9 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 #
-# cms-booklet - github.com/obag/cms-booklet
+# cmsbooklet - https://github.com/algorithm-ninja/cmsbooklet
 # Copyright © 2014 Gabriele Farina <gabr.farina@gmail.com>
+# Copyright © 2015-2018 William Di Luigi <williamdiluigi@gmail.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,11 +30,12 @@ PACKAGE_DATA = {
 }
 
 setup(
-    name = 'cmsbooklet',
-    version = '0.11',
-    description = 'cms-booklet: problem statement processor for CMS (Contest Management System)',
-    author = 'Gabriele Farina',
-    author_email = 'gabr.farina@gmail.com',
+    name='cmsbooklet',
+    version='0.11',
+    description='cmsbooklet: problem statement processor for CMS '
+                '(Contest Management System)',
+    author='Gabriele Farina',
+    author_email='gabr.farina@gmail.com',
     packages=find_packages(),
     package_data=PACKAGE_DATA,
     entry_points={
