@@ -100,7 +100,7 @@ def process_problem(raw_content):
             lines[i] = '%' + lines[i]
 
         # Extract 'filename.pdf' from '\includegraphics[options]{filename.pdf}'
-        m = re.search("\\includegraphics.*\{([^\}]+\.pdf)\}", line)
+        m = re.search(r"\\includegraphics.*\{([^\}]+\.pdf)\}", line)
         if m:
             asy_graphics += [m.group(1)]
 
@@ -135,7 +135,7 @@ def main():
     # Get the list of all the available templates
     templates = [
         name for name in os.listdir(templates_dir)
-        if os.path.isdir(os.path.join(templates_dir, name))
+        if os.path.isdir(os.path.join(templates_dir, name)) and name != "__pycache__"
     ]
 
     epilog = ''
@@ -379,7 +379,7 @@ def main():
 
             print("[i] Reading problem statement file (%s)" % problem_statement_file)
             raw_problem_content = open(
-                problem_statement_file).read().decode('utf8')
+                problem_statement_file, encoding="utf-8").read()
             problem_content, problem_dependencies, asy_graphics = process_problem(
                 raw_problem_content)
             additional_packages += problem_dependencies
@@ -392,12 +392,12 @@ def main():
                 problem_template.render(problem_tpl_args)]
 
             print("[i] Writing problem statement (%s)" % target_statement_file)
-            open(target_statement_file, 'w').write(
+            open(target_statement_file, 'w', encoding="utf-8").write(
                 contest_template.render(
                     contest_tpl_args,
                     __problems=rendered_problem_templates[-1:],
                     __additional_packages=problem_dependencies
-                ).encode('utf8')
+                )
             )
 
             errors = False
@@ -512,12 +512,12 @@ def main():
         booklet_pdf_file = os.path.join(
             os.path.dirname(contest_abspath), 'booklet.pdf')
         print("[i] Writing booklet file (%s)" % target_booklet_file)
-        open(target_booklet_file, 'w').write(
+        open(target_booklet_file, 'w', encoding="utf-8").write(
             contest_template.render(
                 contest_tpl_args,
                 __problems=rendered_problem_templates,
                 __additional_packages=additional_packages
-            ).encode('utf8')
+            )
         )
 
         errors = False
