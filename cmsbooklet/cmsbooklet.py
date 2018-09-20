@@ -64,7 +64,7 @@ def copy_static(src, dst, force_content=False):
     irrespective of what stated before.
 
     """
-    #print "src: %s, dst: %s" % (src, dst)
+    # print "src: %s, dst: %s" % (src, dst)
     assert os.path.isdir(dst)
 
     if not os.path.isdir(src):
@@ -261,7 +261,8 @@ def main():
                         print("[d] Overriding value for key \"%s\". Setting \"%s\"." % (
                             key, value))
                     else:
-                        print("[i] Empty value for key \"%s\". Skipping override." % key)
+                        print(
+                            "[i] Empty value for key \"%s\". Skipping override." % key)
             else:
                 print("[w] No template variable named '%s'!" % key)
         contest_tpl_args['__language'] = language
@@ -377,7 +378,8 @@ def main():
             problem_pdf_file = os.path.join(os.path.dirname(
                 task_abspath), 'testo', '%s.pdf' % language)
 
-            print("[i] Reading problem statement file (%s)" % problem_statement_file)
+            print("[i] Reading problem statement file (%s)" %
+                  problem_statement_file)
             raw_problem_content = open(
                 problem_statement_file, encoding="utf-8").read()
             problem_content, problem_dependencies, asy_graphics = process_problem(
@@ -447,7 +449,8 @@ def main():
                     for asy_file in asy_graphics:
                         if not os.path.exists(os.path.join(target_dir, asy_file)):
                             print("[w] Asymptote graphics file not compiled")
-                            print("[w] Hint: ensure you have installed: asymptote")
+                            print(
+                                "[w] Hint: ensure you have installed: asymptote")
                             errors = True
                             break
                     if not errors:
@@ -474,10 +477,14 @@ def main():
                     shutil.copyfile(target_pdf_file, problem_pdf_file)
                     errors = False
                 else:
-                    print("[w] PDF file not created. View log files in %s (or rerun with --keep)" % target_dir)
-                    print("[w] Hint: if you're on Ubuntu, ensure that you have: texlive-full")
-                    print("[w] Hint: if you're on Arch Linux, ensure that you have: texlive-most texlive-lang")
-                    print("[w] Hint: ensure that all referenced files exists (e.g. sample input/output files inside 'testo')")
+                    print(
+                        "[w] PDF file not created. View log files in %s (or rerun with --keep)" % target_dir)
+                    print(
+                        "[w] Hint: if you're on Ubuntu, ensure that you have: texlive-full")
+                    print(
+                        "[w] Hint: if you're on Arch Linux, ensure that you have: texlive-most texlive-lang")
+                    print(
+                        "[w] Hint: ensure that all referenced files exists (e.g. sample input/output files inside 'testo')")
                     errors = True
 
             if not args['keep'] and not errors:
@@ -594,7 +601,8 @@ def main():
                 shutil.copyfile(target_pdf_file, booklet_pdf_file)
                 errors = False
             else:
-                print("[w] PDF file not created. Rerun with --keep or view log files in %s" % target_dir)
+                print(
+                    "[w] PDF file not created. Rerun with --keep or view log files in %s" % target_dir)
                 errors = True
 
         if not args['keep'] and not errors:
