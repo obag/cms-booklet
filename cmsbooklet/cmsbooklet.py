@@ -111,7 +111,7 @@ def main():
     templates_dir = pkg_resources.resource_filename("cmsbooklet.templates", "")
     if not os.path.exists(templates_dir):
         templates_dir = os.path.join(sys.prefix, 'cms-booklet', 'templates')
-    #print >> sys.stderr, "Using templates_dir %s" % (templates_dir)
+    # print("Using templates_dir %s" % templates_dir, file=sys.stderr)
 
     # Set up jinja2:
     jinja2_env = jinja2.Environment(
@@ -225,20 +225,21 @@ def main():
     for contest in args['contest']:
         contest_abspath = os.path.abspath(contest)
         print("[>] Processing CONTEST file: %s" % contest_abspath)
-        print("[i] Reading contest file")
 
         contest_tpl_args = dict(
-            list(zip(contest_template_variables, [
-                None]*len(contest_template_variables)))
+            zip(contest_template_variables,
+                [None]*len(contest_template_variables))
         )
+
+        # Set default values
         if 'contest' in template_defaults:
-            for var in template_defaults['contest']:
+            for var, value in template_defaults['contest'].items():
                 if var in contest_tpl_args:
-                    contest_tpl_args[var] = template_defaults['contest'][var]
+                    contest_tpl_args[var] = value
 
         # Process the contest.yaml file
         contest_yaml = yaml.load(open(contest_abspath).read())
-        for (key, value) in list(contest_yaml.items()):
+        for key, value in contest_yaml.items():
             if key in contest_template_variables:
                 if value is not None:
                     contest_tpl_args[key] = value
@@ -251,26 +252,28 @@ def main():
         for opt in args['set']:
             try:
                 key, value = opt.split("=")
-                if value in ('True', 'False'):
-                    value = eval(value)
+                if value.title() in ('True', 'False'):
+                    value = eval(value.title())
             except:
                 raise NotImplementedError
-                if key in contest_template_variables:
-                    if value is not None:
-                        contest_tpl_args[key] = value
-                        print("[d] Overriding value for key \"%s\". Setting \"%s\"." % (
-                            key, value))
-                    else:
-                        print(
-                            "[i] Empty value for key \"%s\". Skipping override." % key)
+
+            if key in contest_template_variables:
+                if value is not None:
+                    contest_tpl_args[key] = value
+                    print("[d] Overriding value for key \"%s\". Setting \"%s\"." % (
+                        key, value))
+                else:
+                    print(
+                        "[i] Empty value for key \"%s\". Skipping override." % key)
             else:
-                print("[w] No template variable named '%s'!" % key)
+                print("[w] No contest template variable named '%s'!" % key)
+
         contest_tpl_args['__language'] = language
 
-        print("[*] Contest template variables:")
-        for (key, value) in list(contest_tpl_args.items()):
+        print("[-] Contest template variables:")
+        for key, value in list(contest_tpl_args.items()):
             if key[:2] != '__':
-                print("[-] '%s': '%s'" % (key, value))
+                print(" - '%s': '%s'" % (key, value))
 
         assert 'tasks' in contest_yaml
 
@@ -278,37 +281,37 @@ def main():
         additional_packages = []
         contest_statics = []
         contest_asy_graphics = []
+
         for task in contest_yaml['tasks']:
             if args['only'] and task != args["only"]:
+                print("[x] Skipping task %s..." % task)
                 continue
+
+            print("\n----- start processing task %s -----\n" % task)
+
             task_abspath = os.path.join(os.path.dirname(
                 contest_abspath), task, 'task.yaml')
             print("[>] Processing PROBLEM file: %s" % task_abspath)
-            print("[i] Reading problem file")
 
             problem_tpl_args = dict(
-                list(zip(problem_template_variables, [
-                    None]*len(problem_template_variables)))
+                zip(problem_template_variables,
+                    [None]*len(problem_template_variables))
             )
+
+            # Set default values
             if 'problem' in template_defaults:
-                for var in template_defaults['problem']:
+                for var, value in template_defaults['problem'].items():
                     if var in problem_tpl_args:
-                        if value is not None:
-                            problem_tpl_args[var] = template_defaults['problem'][var]
-                            print("[d] Overriding value for key \"%s\" and task \"%s\". Setting \"%s\"." % (
-                                key, task, value))
-                        else:
-                            print("[i] Empty value for key \"%s\" and task \"%s\". Skipping override." % (
-                                key, task))
+                        problem_tpl_args[var] = value
 
             # Process the task.yaml file
             task_yaml = yaml.load(open(task_abspath).read())
-            for (key, value) in list(task_yaml.items()):
+            for key, value in task_yaml.items():
                 if key in problem_template_variables:
                     if value is not None:
+                        problem_tpl_args[key] = value
                         print("[d] Overriding value for key \"%s\" and task \"%s\". Setting \"%s\"." % (
                             key, task, value))
-                        problem_tpl_args[key] = value
                     else:
                         print("[i] Empty value for key \"%s\" and task \"%s\". Skipping override." % (
                             key, task))
@@ -317,10 +320,11 @@ def main():
             for opt in args['set']:
                 try:
                     key, value = opt.split("=")
-                    if value in ('True', 'False'):
-                        value = eval(value)
+                    if value.title() in ('True', 'False'):
+                        value = eval(value.title())
                 except:
                     raise NotImplementedError
+
                 if key in problem_template_variables:
                     if value is not None:
                         print("[d] Overriding value for key \"%s\" and task \"%s\". Setting \"%s\"." % (
@@ -329,22 +333,15 @@ def main():
                     else:
                         print("[i] Empty value for key \"%s\" and task \"%s\". Skipping override." % (
                             key, task))
-                elif key in contest_template_variables:
-                    if value is not None:
-                        print("[d] Overriding value for contest key \"%s\" and task \"%s\". Setting \"%s\"." % (
-                            key, task, value))
-                        contest_tpl_args[key] = value
-                    else:
-                        print("[i] Empty value for contest key \"%s\" and task \"%s\". Skipping override." % (
-                            key, task))
                 else:
-                    print("[w] No template variable named '%s'!" % key)
+                    print("[w] No problem template variable named '%s'!" % key)
+
             problem_tpl_args['__language'] = language
 
-            print("[*] Problem template variables:")
-            for (key, value) in list(problem_tpl_args.items()):
+            print("[-] Problem template variables:")
+            for key, value in list(problem_tpl_args.items()):
                 if key[:2] != '__':
-                    print("[-] '%s': '%s'" % (key, value))
+                    print(" - '%s': '%s'" % (key, value))
 
             # Fill in the template for the single problem
             if args['keep']:
@@ -359,7 +356,9 @@ def main():
             else:
                 target_dir = tempfile.mkdtemp()
                 shutil.rmtree(target_dir)
+
             print("[i] Setting up working directory (%s)" % target_dir)
+
             if os.path.exists(template_data_folder):
                 shutil.copytree(template_data_folder, target_dir)
             if not os.path.exists(target_dir):
@@ -368,7 +367,7 @@ def main():
                 path = os.path.join(os.path.dirname(
                     task_abspath), 'testo', obj)
                 if obj[0] not in ('_', '.'):
-                    print("[i] Copying file/dir %s" % path)
+                    # print("[i] Copying file/dir %s" % path)
                     contest_statics += [path]
                     copy_static(path, target_dir)
 
@@ -386,8 +385,11 @@ def main():
                 raw_problem_content)
             additional_packages += problem_dependencies
             contest_asy_graphics += asy_graphics
+
+            if len(problem_dependencies) > 0:
+                print("[-] Additional packages:")
             for package in problem_dependencies:
-                print("[-] Additional package: %s" % package)
+                print(" - %s" % package)
 
             problem_tpl_args['__content'] = problem_content
             rendered_problem_templates += [
@@ -495,6 +497,8 @@ def main():
             # No booklet
             continue
 
+        print("\n----- start processing booklet -----\n")
+
         if args['keep']:
             target_dir = os.path.join(os.path.dirname(
                 contest_abspath), 'booklet', '_%s_files' % language)
@@ -507,7 +511,9 @@ def main():
         else:
             target_dir = tempfile.mkdtemp()
             shutil.rmtree(target_dir)
+
         print("[i] Setting up working directory (%s)" % target_dir)
+
         if os.path.exists(template_data_folder):
             shutil.copytree(template_data_folder, target_dir)
         elif not os.path.exists(target_dir):

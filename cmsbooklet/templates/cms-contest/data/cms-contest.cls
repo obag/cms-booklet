@@ -50,6 +50,7 @@
 \RequirePackage{ifthen}
 \RequirePackage{tabularx}
 \RequirePackage{environ}
+\RequirePackage{fontawesome}
 
 
 \pagestyle{fancy}
@@ -68,7 +69,7 @@
 \DeclareOption{problemnumbers}{\@showproblemnumbertrue}
 \DeclareOption{intentionallyblankpages}{\@intentionallyblankpagestrue}
 \DeclareOption{showsolutions}{\@showsolutionstrue}
-\DeclareOption{showsummary}{\@showsummaryfalse}
+\DeclareOption{showsummary}{\@showsummarytrue}
 
 % Language support
 \gdef\@languagecode{EN}
@@ -206,6 +207,11 @@
 % knows the number of the current subtask (relative to the current problem)
 \newcounter{@subtaskcounter}[@problemcounter]
 
+% @oisubtaskcounter -- counter for OIS style subtasks
+%
+% knows the number of the current subtask (relative to the current problem)
+\newcounter{@oisubtaskcounter}[@problemcounter]
+
 
 %*********************************************************************
 %                         Internal commands                          *
@@ -336,6 +342,45 @@
         \nopagebreak
         \par\afterproblemsectioncaption
     }
+}
+
+
+% Level
+%
+% prints a description of the knowledge level required by the solution, on a scale
+% from 0 to 5, as a number of books, e.g. \Level{3} will print 3 books out of 5
+%
+% Arguments: 1) number of books, min 0 max 5   e.g. 3
+
+\newcommand{\Level}[1]{
+	\ifnum#1=0\textcolor{orange}{}\textcolor{gray}{\faBook\faBook\faBook\faBook\faBook}\fi
+	\ifnum#1=1\textcolor{orange}{\faBook}\textcolor{gray}{\faBook\faBook\faBook\faBook}\fi
+	\ifnum#1=2\textcolor{orange}{\faBook\faBook}\textcolor{gray}{\faBook\faBook\faBook}\fi
+	\ifnum#1=3\textcolor{orange}{\faBook\faBook\faBook}\textcolor{gray}{\faBook\faBook}\fi
+	\ifnum#1=4\textcolor{orange}{\faBook\faBook\faBook\faBook}\textcolor{gray}{\faBook}\fi
+	\ifnum#1=5\textcolor{orange}{\faBook\faBook\faBook\faBook\faBook}\textcolor{gray}{}\fi
+}
+
+% OISubtask  -- subtask in OIS style: www.oisquadre.it
+%
+% creates the section title for a subtask, specifying the number
+% of points and the level. This automatically increments the subtask counter.
+%
+% Arguments: 1) score for the current subtask   e.g. 20
+% Arguments: 2) level for the current subtask   e.g. 3
+
+\newcommand{\OISubtask}[4]{
+  {
+    \addtocounter{@oisubtaskcounter}{1}
+
+    \begin{minipage}[t]{0.3\textwidth}
+  	\textendash{}~\textbf{\kw@Subtask~\arabic{@oisubtaskcounter}}~(#1~\kw@points)\\
+  	\phantom{\textendash{}}~\Level{#2}
+    \end{minipage}
+    \begin{minipage}[t]{0.7\textwidth}
+  	#3
+    \end{minipage}
+  }
 }
 
 \newcommand{\setContestDay}[1]{
@@ -529,6 +574,30 @@
 }{
     \end{tabular}
 }
+
+
+% warning
+%
+% environment used to point out some warnings, e.g. about possible overflow
+% issues (and suggestions on how to use modular arithmetic)
+
+\newenvironment{warning}
+  {\par\begin{mdframed}[linewidth=2pt,linecolor=gray]%
+    \begin{list}{}{\leftmargin=1cm
+                   \labelwidth=\leftmargin}\item[\Large\ding{43}]}
+  {\end{list}\end{mdframed}\par}
+
+
+% danger
+%
+% like warning, but more prominent (and red)
+
+\newenvironment{danger}
+{\par\begin{mdframed}[linewidth=2pt,linecolor=red!60!yellow,backgroundcolor=red!20!white]%
+		\begin{list}{}{\leftmargin=1cm
+				\labelwidth=\leftmargin}\item[\Large\ding{45}]}
+		{\end{list}\end{mdframed}\par}
+
 
 % end of cms-style.sty
 \makeatother
