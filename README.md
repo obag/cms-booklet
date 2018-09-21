@@ -9,21 +9,20 @@ cmsbooklet is a tool meant to facilitate the typesetting of olympic problems. It
 Dependencies
 ------------
 
-Ensure that you have the texlive suite installed, and check that the latexmk command is available (on some distros you have to install it explicitly but on the serious ones, like ArchLinux, it's installed by default with the standard texlive package).
+Ensure that you have the texlive suite installed, and check that the `latexmk` command is available (on some distros you have to install it explicitly but on the serious ones, like ArchLinux, it's installed by default with the standard texlive package).
 
 Installation
 ------------
 
 To install the `cmsbooklet` command, we recommend that you use a Python *virtual environment*. So, ensure that you have the `virtualenv` command available. You can install it by typing:
 
-* `sudo apt-get install python-virtualenv` on **Ubuntu 14.04**.
-* `sudo apt-get install virtualenv` on **Ubuntu 16.04**.
-* `sudo pacman -S virtualenv` on **Arch Linux**.
+* `sudo apt-get install python3-virtualenv` on **Ubuntu 18.04**.
+* `sudo pacman -S python-virtualenv` on **Arch Linux**.
 
 Then run:
 
 ```bash
-$ virtualenv -p python2 ~/my_venv
+$ python3 -m venv ~/my_venv
 ```
 
 Where `my_venv` can be anything you want. Then activate it:
@@ -58,4 +57,4 @@ Further options
 
 // TODO
 cmsbooklet supports these flags:
-  - `--keep`: keeps working files 
+  - `--keep`: keeps working files

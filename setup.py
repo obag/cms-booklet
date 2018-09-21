@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # cmsbooklet - https://github.com/algorithm-ninja/cmsbooklet
@@ -31,7 +31,7 @@ PACKAGE_DATA = {
 
 setup(
     name='cmsbooklet',
-    version='0.11',
+    version='1.0',
     description='cmsbooklet: problem statement processor for CMS '
                 '(Contest Management System)',
     author='Gabriele Farina',
