@@ -434,9 +434,10 @@
 %            5) Time limit          e.g. 1 second
 %            6) Memory limit        e.g. 256 Mib
 %            7) Difficulty          e.g. 2
+%            8) Syllabus level      (from 1 to 5)
 %
 
-\newenvironment{problem}[7]{
+\newenvironment{problem}[8]{
     \setcounter{figure}{0}
 
     % Store values so that they dont go lost
@@ -448,6 +449,7 @@
     \gdef\this@inputfilename{#3}
     \gdef\this@outputfilename{#4}
     \gdef\this@problemrevnumber{}
+    \gdef\this@syllabuslevel{#8}
 
     % Header
     \if@showlogo\else\setlength{\logolength}{0mm}\setlength{\logomargin}{0mm}\fi
@@ -458,10 +460,11 @@
            \begin{minipage}[b]{\textwidth-\logolength-\logomargin}%
             {\sffamily\Large
                 \this@contestname%
-                \ifthenelse{\equal{\this@contestday}{}} %
-                {}{%
-                    \hfill\makebox[0pt][r]{\kw@Day~\this@contestday}%
-                }%
+                \hfill%
+                \ifthenelse{\equal{\this@contestday}{}}%
+                {}{\makebox[0pt][r]{\kw@Day~\this@contestday}}%
+                \ifthenelse{\equal{\this@syllabuslevel}{None}}%
+                {}{\makebox[0pt][r]{\Level{\this@syllabuslevel}}}%
             }
             \vskip 2.5mm \hrule\vskip 2.5mm%
             {\sffamily\makebox[0pt][l]{%
