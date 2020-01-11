@@ -142,7 +142,7 @@ def main():
     for template_name in templates:
         epilog += 'Options for template \'%s\':\n' % template_name
         template_dir = os.path.join(templates_dir, template_name)
-        defaults = yaml.load(
+        defaults = yaml.safe_load(
             open(os.path.join(template_dir, 'defaults.yaml')).read())
 
         for opt in get_template_variables(template_name, 'contest.tpl'):
@@ -220,7 +220,7 @@ def main():
         args['template'], 'problem.tpl')
 
     print("[i] Loading template defaults (%s)" % template_defaults_file)
-    template_defaults = yaml.load(open(template_defaults_file).read())
+    template_defaults = yaml.safe_load(open(template_defaults_file).read())
 
     for contest in args['contest']:
         contest_abspath = os.path.abspath(contest)
@@ -238,7 +238,7 @@ def main():
                     contest_tpl_args[var] = value
 
         # Process the contest.yaml file
-        contest_yaml = yaml.load(open(contest_abspath).read())
+        contest_yaml = yaml.safe_load(open(contest_abspath).read())
         for key, value in contest_yaml.items():
             if key in contest_template_variables:
                 if value is not None:
@@ -305,7 +305,7 @@ def main():
                         problem_tpl_args[var] = value
 
             # Process the task.yaml file
-            task_yaml = yaml.load(open(task_abspath).read())
+            task_yaml = yaml.safe_load(open(task_abspath).read())
             for key, value in task_yaml.items():
                 if key in problem_template_variables:
                     if value is not None:
