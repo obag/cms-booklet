@@ -31,6 +31,7 @@ import pkg_resources
 import re
 from jinja2 import meta as jinja2_meta
 
+LATEXMK_CMD = ['latexmk', '-f', '-interaction=nonstopmode', '-pdf']
 
 def fully_split(path):
     """Split a path into a list of components.
@@ -158,6 +159,11 @@ def main():
         formatter_class=argparse.RawTextHelpFormatter
     )
     parser.add_argument(
+        '--xelatex',
+        action='store_true',
+        help='Instruct latexmk to use the XeLaTeX engine'
+    )
+    parser.add_argument(
         '-k', '--keep',
         action='store_true',
         help='Keep working directory'
@@ -201,6 +207,10 @@ def main():
     # Parse the arguments
     args = vars(parser.parse_args())
     language = args['language']
+
+    # Use XeLaTex if requested
+    if args["xelatex"]:
+        LATEXMK_CMD.append("--xelatex")
 
     # Check that the templates exist:
     template_dir = os.path.join(templates_dir, args['template'])
@@ -460,8 +470,7 @@ def main():
 
                 print("[>] Compiling tex file")
                 proc = subprocess.Popen(
-                    ['latexmk', '-f', '-interaction=nonstopmode',
-                        '-pdf', target_statement_file],
+                    LATEXMK_CMD + [target_statement_file],
                     cwd=target_dir,
                     stdout=open(os.devnull, "w"),
                     stderr=open(os.devnull, "w")
@@ -587,8 +596,7 @@ def main():
 
             print("[>] Compiling tex file")
             proc = subprocess.Popen(
-                ['latexmk', '-f', '-interaction=nonstopmode',
-                    '-pdf', target_booklet_file],
+                LATEXMK_CMD + [target_booklet_file],
                 cwd=target_dir,
                 stdout=open(os.devnull, "w"),
                 stderr=open(os.devnull, "w")
